@@ -1,0 +1,13 @@
+:root {
+  --cv-bg-primary: #ffffff;
+  --cv-bg-secondary: #f8fafc;
+  --cv-text-primary: #111827;
+  --cv-text-secondary: #4b5563;
+  --cv-text-muted: #9ca3af;
+  --cv-accent: #3b82f6;
+  --cv-accent-hover: #2563eb;
+  --cv-border: #e2e8f0;
+  --cv-radius: 12px;
+  --cv-container: 1200px;
+  --cv-container-narrow: 800px;
+}
