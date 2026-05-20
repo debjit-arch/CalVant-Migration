@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   CircularProgress,
@@ -9,7 +10,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@material-ui/core";
+} from "@mui/material";
 import axios from "axios";
 import {
   Table,
@@ -32,7 +33,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   Search as SearchIcon,
   Refresh as RefreshIcon,
@@ -52,7 +53,7 @@ import {
   Apps as AppsIcon,
   Description as DescriptionIcon,
   ErrorOutline as ErrorOutlineIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { ChevronDown, ClipboardList, Brain, Table2Icon } from "lucide-react";
 import Evidence_Modal from "./evidencemodal";
 import taskService from "../taskManagement/services/taskService";
@@ -356,13 +357,12 @@ const PdfPreviewModal = ({ open, onClose, pdfUrl, fileName }) => (
     <DialogActions
       style={{ padding: "12px 24px", borderTop: "1px solid #e2e8f0" }}
     >
-      <Button
+      <button
         onClick={onClose}
-        variant="outlined"
-        style={{ borderRadius: 8, textTransform: "none", fontWeight: 600 }}
+        style={{ borderRadius: 8, textTransform: "none", fontWeight: 600, padding: "8px 16px", border: "1px solid #ccc", background: "white", cursor: "pointer" }}
       >
         Close
-      </Button>
+      </button>
     </DialogActions>
   </Dialog>
 );
@@ -2582,36 +2582,36 @@ const RiskAssessmentTable = () => {
                 flexWrap="wrap"
                 justifyContent={isMobile ? "center" : "flex-end"}
               >
-                <Button
-                  variant="contained"
+                <button
                   style={{
                     backgroundColor: tenantId ? "#7b1fa2" : "#bdbdbd",
                     color: "white",
                     minWidth: 150,
                     height: 42,
                     borderRadius: 10,
-                    textTransform: "none",
+                    border: "none",
                     fontSize: "14px",
                     fontWeight: 600,
                     cursor: tenantId ? "pointer" : "not-allowed",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "0 16px",
                   }}
-                  startIcon={<CloudSyncIcon />}
                   onClick={syncComplianceData}
                   disabled={!tenantId || isLoading}
                 >
+                  <CloudSyncIcon size={18} />
                   Sync from Cloud
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<Table2Icon />}
+                </button>
+                <button
                   onClick={() => setShowCapSpreadsheet(true)}
                   disabled={filteredData.length === 0}
-                  size="large"
                   style={{
                     minWidth: 170,
                     height: 42,
                     borderRadius: 10,
-                    textTransform: "none",
+                    border: "none",
                     fontSize: "14px",
                     fontWeight: 700,
                     background:
@@ -2623,28 +2623,38 @@ const RiskAssessmentTable = () => {
                       filteredData.length > 0
                         ? "0 2px 10px rgba(99,102,241,0.3)"
                         : "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "0 16px",
+                    cursor: filteredData.length > 0 ? "pointer" : "not-allowed",
                   }}
                 >
+                  <Table2Icon size={18} />
                   Manage CAP
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<RefreshIcon />}
+                </button>
+                <button
                   onClick={() => fetchComplianceData(true)}
                   disabled={!tenantId || isLoading}
-                  size="large"
                   style={{
                     minWidth: 140,
                     height: 42,
                     borderRadius: 10,
-                    textTransform: "none",
+                    border: "none",
                     fontSize: "14px",
                     fontWeight: 600,
+                    background: "#3b82f6",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "0 16px",
+                    cursor: !tenantId || isLoading ? "not-allowed" : "pointer",
                   }}
                 >
+                  <RefreshIcon size={18} />
                   Refresh Snapshot
-                </Button>
+                </button>
               </Box>
             </Box>
             <Box
@@ -3674,8 +3684,7 @@ const RiskAssessmentTable = () => {
                                       >
                                         Task created
                                       </span>
-                                      <Button
-                                        size="small"
+                                      <button
                                         onClick={() =>
                                           setAddTaskFor({
                                             controlId: group.controlId,
@@ -3690,19 +3699,18 @@ const RiskAssessmentTable = () => {
                                           border: "1px solid #bbf7d0",
                                           background: "#f0fdf4",
                                           color: "#166534",
+                                          cursor: "pointer",
                                         }}
                                       >
                                         + Another
-                                      </Button>
+                                      </button>
                                     </Box>
                                   ) : (
                                     <Tooltip
                                       title="Create Corrective Action Task"
                                       arrow
                                     >
-                                      <Button
-                                        size="small"
-                                        variant="contained"
+                                      <button
                                         onClick={() =>
                                           setAddTaskFor({
                                             controlId: group.controlId,
@@ -3720,11 +3728,16 @@ const RiskAssessmentTable = () => {
                                           minWidth: 0,
                                           boxShadow:
                                             "0 2px 6px rgba(79,70,229,0.3)",
+                                          border: "none",
+                                          cursor: "pointer",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          gap: 4,
                                         }}
-                                        startIcon={<ClipboardList size={11} />}
                                       >
+                                        <ClipboardList size={11} />
                                         Add CAP
-                                      </Button>
+                                      </button>
                                     </Tooltip>
                                   ))}
                               </TableCell>
@@ -3871,7 +3884,7 @@ const RiskAssessmentTable = () => {
               </Typography>
             </DialogContent>
             <DialogActions style={{ padding: "12px 24px", gap: 8 }}>
-              <Button
+              <button
                 onClick={() =>
                   setConfirmDelete({
                     open: false,
@@ -3880,28 +3893,33 @@ const RiskAssessmentTable = () => {
                     fileName: null,
                   })
                 }
-                variant="outlined"
                 style={{
                   borderRadius: 8,
                   textTransform: "none",
                   fontWeight: 600,
+                  padding: "8px 16px",
+                  border: "1px solid #ccc",
+                  background: "white",
+                  cursor: "pointer",
                 }}
               >
                 Cancel
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={handleDeleteConfirmed}
-                variant="contained"
                 style={{
                   borderRadius: 8,
                   textTransform: "none",
                   fontWeight: 600,
                   backgroundColor: "#d32f2f",
                   color: "white",
+                  border: "none",
+                  padding: "8px 16px",
+                  cursor: "pointer",
                 }}
               >
                 Delete
-              </Button>
+              </button>
             </DialogActions>
           </Dialog>
 

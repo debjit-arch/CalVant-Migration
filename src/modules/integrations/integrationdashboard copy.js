@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@material-ui/core";
+} from "@mui/material";
 import axios from "axios";
 import {
   Table,
@@ -32,7 +32,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   Search as SearchIcon,
   Refresh as RefreshIcon,
@@ -52,7 +52,7 @@ import {
   Apps as AppsIcon,
   Description as DescriptionIcon,
   ErrorOutline as ErrorOutlineIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { ChevronDown, ClipboardList, Brain } from "lucide-react";
 import Evidence_Modal from "./evidencemodal";
 import taskService from "../taskManagement/services/taskService";

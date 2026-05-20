@@ -1,0 +1,47 @@
+/* shared-theme.css – core design tokens */
+:root {
+  --border-width: 3px;
+  --border-radius: 8px;
+  --shadow: 5px 5px 0px 0px;
+  --color-primary: #2563eb;
+  --color-secondary: #10b981;
+  --color-text: #f3f4f6;
+  --color-muted: #9ca3af;
+  --font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-weight-bold: 600;
+}
+
+/* Shared container styling */
+.module-container,
+.card,
+.assessment-card,
+.risk-card,
+.policy-card,
+.hero-section,
+.empty-state {
+  border-width: var(--border-width);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  background-color: white;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Heavy typography */
+.text-heavy {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+/* Utility */
+.bg-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+.bg-secondary {
+  background-color: var(--color-secondary);
+  color: white;
+}

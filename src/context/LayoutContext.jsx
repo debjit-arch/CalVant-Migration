@@ -5,7 +5,7 @@ const LayoutContext = createContext(null);
 
 export const SIDEBAR_COLLAPSED_WIDTH = 72;
 export const SIDEBAR_EXPANDED_WIDTH = 280;
-export const NAVBAR_HEIGHT = 64;
+export const NAVBAR_HEIGHT = 72;
 
 export const LayoutProvider = ({ children }) => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);

@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect } from "react";
 import {
   UserCircle2,
@@ -19,7 +21,19 @@ import {
   Users,
 } from "lucide-react";
 import "./ISO_42001.css";
+import "./Procedures.css"
 
+
+const getStoredUser = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(sessionStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
+
+const storedUser = getStoredUser();
 const ISO_42001 = () => {
   const handleScrollTo = (id) => {
     const el = document.getElementById(id);
@@ -40,7 +54,7 @@ const ISO_42001 = () => {
       <header className="procedures-header">
         <div className="procedures-header-content">
           <div className="procedures-logo-section">
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               style={{ height: "210px", width: "auto", cursor: "pointer" }}
@@ -50,34 +64,75 @@ const ISO_42001 = () => {
 
           <nav className="iso-header-nav">
             <ul className="iso-nav-links">
-              <Link href="/" className="iso-nav-link">Home</Link>
+              <a href="/" className="iso-nav-link">
+                Home
+              </a>
+
               <li>
-                <button type="button" className="iso-nav-link iso-nav-link-btn" onClick={() => handleScrollTo("ai-overview")}>Overview</button>
+                <button
+                  type="button"
+                  className="iso-nav-link iso-nav-link-btn"
+                  onClick={() => handleScrollTo("iso-overview")}
+                >
+                  Overview
+                </button>
               </li>
+
               <li>
-                <button type="button" className="iso-nav-link iso-nav-link-btn" onClick={() => handleScrollTo("ai-clauses")}>Clauses</button>
+                <button
+                  type="button"
+                  className="iso-nav-link iso-nav-link-btn"
+                  onClick={() => handleScrollTo("iso-clauses")}
+                >
+                  Clauses
+                </button>
               </li>
+
               <li>
-                <button type="button" className="iso-nav-link iso-nav-link-btn" onClick={() => handleScrollTo("ai-controls")}>Controls</button>
+                <button
+                  type="button"
+                  className="iso-nav-link iso-nav-link-btn"
+                  onClick={() => handleScrollTo("iso-annex-a")}
+                >
+                  Annex A
+                </button>
               </li>
+
               <li>
-                <button type="button" className="iso-nav-link iso-nav-link-btn" onClick={() => handleScrollTo("ai-benefits")}>Benefits</button>
+                <button
+                  type="button"
+                  className="iso-nav-link iso-nav-link-btn"
+                  onClick={() => handleScrollTo("iso-benefits")}
+                >
+                  Benefits
+                </button>
               </li>
             </ul>
 
+            {/* AUTO-DETECT LOGIN STATUS – UNCHANGED */}
             {(() => {
-              const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
               const isUserLoggedIn = !!storedUser;
+
               return isUserLoggedIn && storedUser ? (
                 <div className="iso-user-card">
                   <UserCircle2 size={20} className="iso-user-icon" />
                   <div className="iso-user-info">
-                    <span className="iso-user-name">{storedUser.name || "User"}</span>
-                    <span className="iso-user-role">{storedUser.department?.name || "Consultant"}</span>
+                    <span className="iso-user-name">
+                      {storedUser.name || "User"}
+                    </span>
+                    <span className="iso-user-role">
+                      {storedUser.department?.name || "Consultant"}
+                    </span>
                   </div>
                 </div>
               ) : (
-                <button type="button" className="iso-btn iso-btn-secondary" onClick={() => goTo("/login")}>Login</button>
+                <button
+                  type="button"
+                  className="iso-btn iso-btn-secondary"
+                  onClick={() => goTo("/login")}
+                >
+                  Login
+                </button>
               );
             })()}
           </nav>
@@ -104,7 +159,6 @@ const ISO_42001 = () => {
 
             <div className="iso-hero-cta">
               {(() => {
-                const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
                 return !storedUser ? (
                   <button type="button" className="iso-hero-primary ai-primary" onClick={() => goTo("/demo")}>
                     <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z" /></svg>
@@ -423,7 +477,6 @@ const ISO_42001 = () => {
           <p>See how CalVant helps you build a modern AIMS, govern AI systems responsibly and stay ahead of emerging regulations.</p>
           <div className="iso-cta-buttons">
             {(() => {
-              const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
               return !storedUser ? (
                 <button type="button" className="iso-cta-btn iso-cta-btn-primary ai-cta-primary" onClick={() => goTo("/demo")}>Get a demo</button>
               ) : null;
@@ -474,3 +527,4 @@ const ISO_42001 = () => {
 };
 
 export default ISO_42001;
+

@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -256,7 +257,7 @@ const TrustCentrePage = () => {
                 display: "flex", alignItems: "center",
                 justifyContent: "center", overflow: "hidden", flexShrink: 0,
               }}>
-                <Image
+                <img
                   src={trustCentreService.getLogoUrl(org)}
                   alt="logo"
                   style={{ width: "100%", height: "100%", objectFit: "contain" }}
@@ -608,3 +609,4 @@ const TrustCentrePage = () => {
 };
 
 export default TrustCentrePage;
+

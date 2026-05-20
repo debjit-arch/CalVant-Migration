@@ -1,3 +1,4 @@
+"use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -35,12 +36,12 @@ const AuthBridge = () => {
         console.warn('Login log failed in bridge:', err);
       }
 
-      window.router.replaceState({}, document.title, "/");
+      window.history.replaceState({}, document.title, "/");
       router.replace("/");
     } else {
       router.replace("/login");
     }
-  }, [history]);
+  }, [router]);
 
   return <div>Redirecting...</div>;
 };

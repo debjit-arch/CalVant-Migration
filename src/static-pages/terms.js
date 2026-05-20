@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
@@ -45,7 +46,7 @@ const TermsPage = () => {
       <header className="terms-header">
         <div className="terms-header-content">
           <div className="terms-logo-section">
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               style={{ height: "210px", width: "auto", cursor: "pointer" }}
@@ -794,4 +795,5 @@ const TermsPage = () => {
 };
 
 export default TermsPage;
+
 

@@ -3,7 +3,7 @@
 /* Container - Full viewport height */
 .risk-assessment-container {
   min-height: calc(100vh - 64px);
-  padding: 16px 20px;
+  padding: 0 20px 16px;
   max-width: 1400px;
   margin: 0 auto;
   box-sizing: border-box;

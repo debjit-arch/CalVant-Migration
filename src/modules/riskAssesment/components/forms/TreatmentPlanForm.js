@@ -1,4 +1,6 @@
 // TreatmentPlanForm — fixed stale controlOptions closure
+"use client";
+
 import React, { useState, useEffect, useCallback } from "react";
 import TextAreaField from "../inputs/TextAreaField";
 import Select from "react-select";

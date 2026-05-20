@@ -1,5 +1,6 @@
-import Image from "next/image";
-import React, { useState, useRef, useEffect } from "react";
+"use client";
+import React, { useEffect } from "react";
+import Link from "next/link";
 import {
   UserCircle2,
   ShieldCheck,
@@ -13,6 +14,16 @@ import {
   Handshake,
 } from "lucide-react";
 import "./ISO_27001.css";
+import "./Procedures.css";
+// Safe sessionStorage helper — window doesn't exist during SSR
+const getStoredUser = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(sessionStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
 
 const ISO_27001 = () => {
   const handleScrollTo = (id) => {
@@ -21,21 +32,32 @@ const ISO_27001 = () => {
   };
 
   const goTo = (path) => {
-    window.location.href = path;
+    if (typeof window !== "undefined") {
+      window.location.href = path;
+    }
   };
 
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" }); // or "smooth"
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, []);
+
+  const storedUser = getStoredUser();
+  const isUserLoggedIn = !!storedUser;
 
   return (
     <div className="iso-page-root procedures-theme">
-      {/* HEADER */}
+      {/* HEADER
+          - className: procedures-header → iso-header  (matches your CSS)
+          - <img> kept as plain img (SVGs don't need next/image optimisation)
+          - logo height 210px → 44px to match production
+          - <a href="/"> → <Link href="/"> wrapped in <li>
+      */}
+
       <header className="procedures-header">
         <div className="procedures-header-content">
           <div className="procedures-logo-section">
             {" "}
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               style={{ height: "210px", width: "auto", cursor: "pointer" }}
@@ -45,9 +67,9 @@ const ISO_27001 = () => {
 
           <nav className="iso-header-nav">
             <ul className="iso-nav-links">
-              <Link href="/" className="iso-nav-link">
+              <a href="/" className="iso-nav-link">
                 Home
-              </Link>
+              </a>
 
               <li>
                 <button
@@ -92,9 +114,6 @@ const ISO_27001 = () => {
 
             {/* AUTO-DETECT LOGIN STATUS – UNCHANGED */}
             {(() => {
-              const storedUser = JSON.parse(
-                sessionStorage.getItem("user") || "null",
-              );
               const isUserLoggedIn = !!storedUser;
 
               return isUserLoggedIn && storedUser ? (
@@ -123,7 +142,7 @@ const ISO_27001 = () => {
         </div>
       </header>
 
-      {/* HERO SECTION - PROCEDURES THEME */}
+      {/* HERO SECTION */}
       <section className="iso-hero">
         <div className="iso-hero-inner">
           <div className="iso-hero-content">
@@ -143,25 +162,18 @@ const ISO_27001 = () => {
             </p>
 
             <div className="iso-hero-cta">
-              {(() => {
-                const storedUser = JSON.parse(
-                  sessionStorage.getItem("user") || "null",
-                );
-                const isUserLoggedIn = !!storedUser;
-                return !isUserLoggedIn ? (
-                  <button
-                    type="button"
-                    className="iso-hero-primary"
-                    onClick={() => goTo("/demo")}
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M8 5v14l11-7z" />
-                    </svg>
-                    Get a live ISO 27001 demo
-                  </button>
-                ) : null;
-              })()}
-
+              {!isUserLoggedIn && (
+                <button
+                  type="button"
+                  className="iso-hero-primary"
+                  onClick={() => goTo("/demo")}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M8 5v14l11-7z" />
+                  </svg>
+                  Get a live ISO 27001 demo
+                </button>
+              )}
               <button
                 type="button"
                 className="iso-hero-secondary"
@@ -171,7 +183,6 @@ const ISO_27001 = () => {
               </button>
             </div>
 
-            {/* HERO STATS ROW */}
             <div className="iso-hero-stats">
               <div className="iso-stat-item iso-stat-item-main">
                 <span className="iso-stat-main-label">ISO 27001</span>
@@ -193,7 +204,7 @@ const ISO_27001 = () => {
             </div>
           </div>
 
-          {/* 3D ISO ORBIT ILLUSTRATION ON RIGHT */}
+          {/* 3D ISO ORBIT ILLUSTRATION */}
           <div className="iso-hero-visual">
             <div className="iso-orbit-container">
               <div className="iso-orbit-background">
@@ -274,7 +285,6 @@ const ISO_27001 = () => {
               organization's risk profile.
             </p>
           </div>
-
           <div className="iso-overview-card">
             <div className="iso-card-icon">
               <BarChart3 size={32} />
@@ -286,7 +296,6 @@ const ISO_27001 = () => {
               goals.
             </p>
           </div>
-
           <div className="iso-overview-card">
             <div className="iso-card-icon">
               <RefreshCw size={32} />
@@ -326,7 +335,6 @@ const ISO_27001 = () => {
                 <li>Identify regulatory, contractual and stakeholder needs.</li>
               </ul>
             </div>
-
             <div className="iso-clause-card">
               <span className="iso-clause-number">Clause 5</span>
               <h3>Leadership and commitment</h3>
@@ -340,7 +348,6 @@ const ISO_27001 = () => {
                 <li>Provide resources and remove blockers.</li>
               </ul>
             </div>
-
             <div className="iso-clause-card">
               <span className="iso-clause-number">Clause 6</span>
               <h3>Planning and risk management</h3>
@@ -354,7 +361,6 @@ const ISO_27001 = () => {
                 <li>Plan how objectives will be achieved and measured.</li>
               </ul>
             </div>
-
             <div className="iso-clause-card">
               <span className="iso-clause-number">Clause 7</span>
               <h3>Support</h3>
@@ -368,7 +374,6 @@ const ISO_27001 = () => {
                 <li>Control creation, updates and retention of documents.</li>
               </ul>
             </div>
-
             <div className="iso-clause-card">
               <span className="iso-clause-number">Clause 8</span>
               <h3>Operational planning and control</h3>
@@ -382,7 +387,6 @@ const ISO_27001 = () => {
                 <li>Document operational procedures where needed.</li>
               </ul>
             </div>
-
             <div className="iso-clause-card">
               <span className="iso-clause-number">Clauses 9 & 10</span>
               <h3>Performance evaluation & improvement</h3>
@@ -435,7 +439,6 @@ const ISO_27001 = () => {
               <li>Project and change management requirements</li>
             </ul>
           </div>
-
           <div className="iso-domain-card">
             <h4 className="iso-domain-title">People controls</h4>
             <p className="iso-domain-desc">
@@ -449,7 +452,6 @@ const ISO_27001 = () => {
               <li>Segregation of duties and access reviews</li>
             </ul>
           </div>
-
           <div className="iso-domain-card">
             <h4 className="iso-domain-title">Physical controls</h4>
             <p className="iso-domain-desc">
@@ -463,7 +465,6 @@ const ISO_27001 = () => {
               <li>Secure disposal of media and assets</li>
             </ul>
           </div>
-
           <div className="iso-domain-card">
             <h4 className="iso-domain-title">Technological controls</h4>
             <p className="iso-domain-desc">
@@ -477,7 +478,6 @@ const ISO_27001 = () => {
               <li>Logging, monitoring and backup strategies</li>
             </ul>
           </div>
-
           <div className="iso-domain-card">
             <h4 className="iso-domain-title">New & updated controls</h4>
             <p className="iso-domain-desc">
@@ -515,7 +515,6 @@ const ISO_27001 = () => {
               bar for onboarding vendors that handle sensitive data.
             </p>
           </div>
-
           <div className="iso-benefit-card">
             <div className="iso-benefit-icon">
               <Shield size={32} />
@@ -526,7 +525,6 @@ const ISO_27001 = () => {
               repeatable and externally assessed—not just based on promises.
             </p>
           </div>
-
           <div className="iso-benefit-card">
             <div className="iso-benefit-icon">
               <Scale size={32} />
@@ -537,7 +535,6 @@ const ISO_27001 = () => {
               support GDPR, HIPAA and other compliance journeys.
             </p>
           </div>
-
           <div className="iso-benefit-card">
             <div className="iso-benefit-icon">
               <TrendingDown size={32} />
@@ -548,7 +545,6 @@ const ISO_27001 = () => {
               detect and contain security events faster.
             </p>
           </div>
-
           <div className="iso-benefit-card">
             <div className="iso-benefit-icon">
               <Recycle size={32} />
@@ -559,7 +555,6 @@ const ISO_27001 = () => {
               security posture from becoming outdated or ad‑hoc.
             </p>
           </div>
-
           <div className="iso-benefit-card">
             <div className="iso-benefit-icon">
               <Handshake size={32} />
@@ -581,24 +576,16 @@ const ISO_27001 = () => {
             See how CalVant helps you build a modern ISMS, stay continuously
             compliant and close security‑sensitive deals faster.
           </p>
-
           <div className="iso-cta-buttons">
-            {(() => {
-              const storedUser = JSON.parse(
-                sessionStorage.getItem("user") || "null",
-              );
-              const isUserLoggedIn = !!storedUser;
-              return !isUserLoggedIn ? (
-                <button
-                  type="button"
-                  className="iso-cta-btn iso-cta-btn-primary"
-                  onClick={() => goTo("/demo")}
-                >
-                  Get a demo
-                </button>
-              ) : null;
-            })()}
-
+            {!isUserLoggedIn && (
+              <button
+                type="button"
+                className="iso-cta-btn iso-cta-btn-primary"
+                onClick={() => goTo("/demo")}
+              >
+                Get a demo
+              </button>
+            )}
             <button
               type="button"
               className="iso-cta-btn iso-cta-btn-secondary"
@@ -620,7 +607,6 @@ const ISO_27001 = () => {
               help teams operationalize ISO 27001 and adjacent frameworks.
             </p>
           </div>
-
           <div className="iso-footer-section">
             <h4>Frameworks</h4>
             <ul>
@@ -632,7 +618,6 @@ const ISO_27001 = () => {
               </li>
             </ul>
           </div>
-
           <div className="iso-footer-section">
             <h4>Product</h4>
             <ul>
@@ -647,7 +632,6 @@ const ISO_27001 = () => {
               </li>
             </ul>
           </div>
-
           <div className="iso-footer-section">
             <h4>Company</h4>
             <ul>
@@ -665,8 +649,7 @@ const ISO_27001 = () => {
         </div>
 
         <div className="iso-footer-bottom">
-          © {new Date().getFullYear()} CalVant· ISO 27001 · Made in
-          India[file:1]
+          © {new Date().getFullYear()} CalVant · ISO 27001 · Made in India
         </div>
       </footer>
     </div>
@@ -674,4 +657,3 @@ const ISO_27001 = () => {
 };
 
 export default ISO_27001;
-

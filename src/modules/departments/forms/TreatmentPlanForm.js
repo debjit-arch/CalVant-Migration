@@ -1,3 +1,4 @@
+"use client";
 import React,{useEffect} from "react";
 import TextAreaField from "../inputs/TextAreaField";
 import TaskManagement from "../../pages/TaskManagement";

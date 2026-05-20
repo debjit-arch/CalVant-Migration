@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect } from "react";
 import {
   UserCircle2,
@@ -18,6 +20,18 @@ import {
   ClipboardList,
 } from "lucide-react";
 import "./KSA_PDPL.css";
+import "./Procedures.css"
+
+const getStoredUser = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(sessionStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
+
+const storedUser = getStoredUser();
 
 const KSA_PDPL = () => {
   const handleScrollTo = (id) => {
@@ -39,7 +53,7 @@ const KSA_PDPL = () => {
       <header className="procedures-header">
         <div className="procedures-header-content">
           <div className="procedures-logo-section">
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               style={{ height: "210px", width: "auto", cursor: "pointer" }}
@@ -57,7 +71,7 @@ const KSA_PDPL = () => {
             </ul>
 
             {(() => {
-              const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
+
               return storedUser ? (
                 <div className="iso-user-card">
                   <UserCircle2 size={20} className="iso-user-icon" />
@@ -94,7 +108,7 @@ const KSA_PDPL = () => {
 
             <div className="iso-hero-cta">
               {(() => {
-                const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
+  
                 return !storedUser ? (
                   <button type="button" className="iso-hero-primary pdpl-primary" onClick={() => goTo("/demo")}>
                     <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z" /></svg>
@@ -413,7 +427,7 @@ const KSA_PDPL = () => {
           <p>See how CalVant maps PDPL obligations to actionable controls, automates data subject request workflows and keeps you continuously compliant.</p>
           <div className="iso-cta-buttons">
             {(() => {
-              const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
+
               return !storedUser ? (
                 <button type="button" className="iso-cta-btn iso-cta-btn-primary pdpl-cta-primary" onClick={() => goTo("/demo")}>Get a demo</button>
               ) : null;
@@ -466,3 +480,4 @@ const KSA_PDPL = () => {
 };
 
 export default KSA_PDPL;
+

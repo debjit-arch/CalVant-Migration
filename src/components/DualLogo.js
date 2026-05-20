@@ -66,7 +66,7 @@ const DualLogo = ({
       }}
     >
       {/* ── CalVant logo ── */}
-      <Image
+      <img
         src={calvantSrc}
         alt="CalVant"
         width={120} // ← add this
@@ -120,7 +120,7 @@ const DualLogo = ({
           />
 
           {/* ── Org logo ── */}
-          <Image
+          <img
             src={orgLogoSrc}
             alt={orgName || "Organization"}
             style={{

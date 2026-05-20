@@ -6,7 +6,7 @@ import {
   Box,
   Container,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   LineChart,
   Line,

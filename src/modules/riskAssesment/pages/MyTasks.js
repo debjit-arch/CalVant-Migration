@@ -1,5 +1,7 @@
 
 //C:\Users\ak192\Downloads\cf-tool-frontend-prod (5)\cf-tool-frontend-prod\src\modules\riskAssesment\pages\MyTasks.js
+"use client";
+
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {

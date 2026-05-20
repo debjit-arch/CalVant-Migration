@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
@@ -26,7 +28,7 @@ const ImageWithFallback = ({ src, alt, className }) => {
   const fallback =
     "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop";
   return (
-    <Image
+    <img
       src={error ? fallback : src}
       alt={alt}
       className={className}
@@ -167,7 +169,6 @@ const BlogPage = () => {
 
   return (
     <ContentLayout heroSection={hero}>
-      <Helmet>
         {/* Primary */}
         <title>Blog - CalVant | Compliance &amp; Security Insights</title>
         <meta name="description" content="Expert articles on ISO 27001, SOC 2, ISO 27701, ISO 42001, GDPR, and enterprise risk management. Stay ahead in information security and compliance." />
@@ -187,7 +188,6 @@ const BlogPage = () => {
         <meta name="twitter:title" content="CalVant Blog | Compliance &amp; Security Insights" />
         <meta name="twitter:description" content="Expert articles on ISO 27001, SOC 2, GDPR, and enterprise risk management." />
         <meta name="twitter:image" content="https://app.calvant.com/CalVant Logo.svg" />
-      </Helmet>
 
       {/* FILTER BAR */}
       <section className="blog-filter-section">
@@ -334,3 +334,4 @@ const BlogPage = () => {
 };
 
 export default BlogPage;
+

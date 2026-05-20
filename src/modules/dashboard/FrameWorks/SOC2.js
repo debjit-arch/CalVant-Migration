@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect } from "react";
 import {
   UserCircle2,
@@ -17,7 +19,18 @@ import {
   FileSearch,
 } from "lucide-react";
 import "./SOC2.css";
+import "./Procedures.css"
 
+const getStoredUser = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(sessionStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
+
+const storedUser = getStoredUser();
 const SOC2 = () => {
   const handleScrollTo = (id) => {
     const el = document.getElementById(id);
@@ -38,7 +51,7 @@ const SOC2 = () => {
       <header className="procedures-header">
         <div className="procedures-header-content">
           <div className="procedures-logo-section">
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               style={{ height: "210px", width: "auto", cursor: "pointer" }}
@@ -56,7 +69,6 @@ const SOC2 = () => {
             </ul>
 
             {(() => {
-              const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
               return storedUser ? (
                 <div className="iso-user-card">
                   <UserCircle2 size={20} className="iso-user-icon" />
@@ -93,7 +105,6 @@ const SOC2 = () => {
 
             <div className="iso-hero-cta">
               {(() => {
-                const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
                 return !storedUser ? (
                   <button type="button" className="iso-hero-primary soc2-primary" onClick={() => goTo("/demo")}>
                     <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z" /></svg>
@@ -400,7 +411,6 @@ const SOC2 = () => {
           <p>See how CalVant helps you collect evidence continuously, stay audit-ready and close security-sensitive deals with confidence.</p>
           <div className="iso-cta-buttons">
             {(() => {
-              const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
               return !storedUser ? (
                 <button type="button" className="iso-cta-btn iso-cta-btn-primary soc2-cta-primary" onClick={() => goTo("/demo")}>Get a demo</button>
               ) : null;
@@ -452,3 +462,4 @@ const SOC2 = () => {
 };
 
 export default SOC2;
+

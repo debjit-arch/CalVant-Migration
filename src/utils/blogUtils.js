@@ -13,13 +13,13 @@ let blogCache = {
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
- * Renders image URLs within HTML content as <Image> tags.
+ * Renders image URLs within HTML content as <img> tags.
  * Preserves legacy behavior for plain-text image links.
  */
 export const renderContentWithImages = (htmlContent) => {
   if (!htmlContent) return "";
   const regex = /(^|>|\s)(https?:\/\/[^\s<"]+\.(?:png|jpg|jpeg|gif|webp|svg)(?:[?#][^\s<"]*)?)(\s|<|$)/gi;
-  return htmlContent.replace(regex, '$1<Image src="$2" style="max-width: 100%; border-radius: 8px; margin: 16px 0; display: block;" alt="Embedded Image" />$3');
+  return htmlContent.replace(regex, '$1<img src="$2" style="max-width: 100%; border-radius: 8px; margin: 16px 0; display: block;" alt="Embedded Image" />$3');
 };
 
 /**

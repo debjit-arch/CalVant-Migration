@@ -1,4 +1,5 @@
 
+"use client";
 //WorkingModel
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";

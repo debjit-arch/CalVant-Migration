@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Joyride from "react-joyride";
@@ -17,7 +18,6 @@ import {
 } from "lucide-react";
 import { PieChart, Pie, ResponsiveContainer, Tooltip, Cell } from "recharts";
 import { motion } from "framer-motion";
-import { NetworkLockedSharp } from "@material-ui/icons";
 import { useFramework } from "../../context/FrameworkContex";
 import {
   getFrameworkCompliance,
@@ -200,7 +200,9 @@ const Compliances = () => {
     const init = async () => {
       try {
         const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+        console.log("Compliances.js - userData:", userData);
         const orgId = userData.organization?._id ?? userData.organization;
+        console.log("Compliances.js - orgId:", orgId);
         if (!orgId) {
           setTenantReady(true);
           return;
@@ -220,7 +222,7 @@ const Compliances = () => {
         const cached = localStorage.getItem("risk_assessment_cache_v1");
         if (!cached) {
           const requirementsRes = await axios.get(
-            `https://api.calvant.com/compliance-brain/compliance/requirements?tenantId=${tenantId}`,
+            `https://api.calvant.com/compliance-brain/compliance/controls?tenantId=${tenantId}`,
             {
               headers: {
                 Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -517,7 +519,7 @@ const Compliances = () => {
         <div>
           <button
             className="bg-blue-600 text-white px-5 py-2 rounded-lg flex items-center gap-2"
-            onClick={() => router.push("/compliances/detailed")}
+            onClick={() => router.push("/integrations")}
           >
             <Eye size={16} /> Detailed View
           </button>

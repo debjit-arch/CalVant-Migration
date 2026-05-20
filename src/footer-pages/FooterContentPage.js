@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
@@ -74,4 +75,5 @@ const FooterContentPage = ({ type: propType }) => {
 };
 
 export default FooterContentPage;
+
 

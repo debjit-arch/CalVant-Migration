@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import {
   ChevronDown,
@@ -24,6 +26,8 @@ import {
   ALL_FRAMEWORKS,
 } from "../../../../context/FrameworkContex";
 import { captureActivity, ACTIONS } from "../../../../services/activities";
+
+import {useRouter} from "next/navigation";
 
 // ── CONDUCT_CAT_COLORS is intentionally hardcoded ────────────────────────────
 // This is category-level UI theming (ISMS Core, People Controls, etc.),
@@ -167,6 +171,7 @@ function ActiveFilterBanner({
 }
 
 export function ConductAuditModal(props) {
+  const router = useRouter();
   var onClose = props.onClose;
   var history = props.history;
   var sessionUser = getSessionUser();

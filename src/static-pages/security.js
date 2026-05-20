@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 // C:\CalVant_frontend-1\src\static-pages\security.js
 import React, { useState, useEffect } from "react";
@@ -101,7 +102,7 @@ const SecurityPage = () => {
       <header className="security-header">
         <div className="security-header-content">
           <div className="security-logo-section">
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               style={{ height: "210px", width: "auto", cursor: "pointer" }}
@@ -457,4 +458,5 @@ const SecurityPage = () => {
 };
 
 export default SecurityPage;
+
 

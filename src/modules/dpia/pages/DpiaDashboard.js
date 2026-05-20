@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "../../../hooks/useUser";
@@ -193,7 +194,7 @@ export default function Dashboard() {
     captureActivity({
       action: ACTIONS.PAGE_LOAD,
       item: "DPIA Dashboard",
-      url: window.pathname,
+      url: window.location.pathname,
     });
   }, [loadData]);
 
@@ -303,7 +304,7 @@ export default function Dashboard() {
       subtitle: "Browse all assessments",
       color: "from-emerald-400 to-emerald-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: View DPIAs", url: window.pathname });
+        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: View DPIAs", url: window.location.pathname });
         router.push("/dpia/assessments");
       },
     },
@@ -314,7 +315,7 @@ export default function Dashboard() {
       subtitle: "Assign to a risk owner",
       color: "from-violet-400 to-violet-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Plan DPIA Modal", url: window.pathname });
+        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Plan DPIA Modal", url: window.location.pathname });
         setModal("assign");
       },
     },
@@ -325,7 +326,7 @@ export default function Dashboard() {
       subtitle: "View & edit assignments",
       color: "from-purple-400 to-purple-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Manage DPIA Modal", url: window.pathname });
+        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Manage DPIA Modal", url: window.location.pathname });
         setModal("manage");
       },
     },
@@ -339,7 +340,7 @@ export default function Dashboard() {
       subtitle: "View your assigned assessments",
       color: "from-violet-400 to-violet-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Conduct DPIA Modal", url: window.pathname });
+        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Conduct DPIA Modal", url: window.location.pathname });
         setModal("myDpias");
       },
     },

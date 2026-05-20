@@ -15,7 +15,7 @@ import {
   Zap,
   Filter,
 } from "lucide-react";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 import { useFramework } from "../../context/FrameworkContex";
 import Evidence_Modal from "./evidencemodal"; // adjust path as needed
 

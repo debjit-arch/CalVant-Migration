@@ -1,5 +1,6 @@
 import React from "react";
 import BlogNavbar from "./BlogNavbar";
+import Link from "next/link";
 import "../styles/ProfessionalLayout.css";
 
 const ContentLayout = ({ children, narrow = false, heroSection = null }) => {

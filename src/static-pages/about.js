@@ -50,7 +50,7 @@ const AboutPage = () => {
       <header className="about-header">
         <div className="about-header-content">
           <div className="about-logo-section">
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               width={210}

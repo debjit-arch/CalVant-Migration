@@ -1118,6 +1118,7 @@
 
 // C:\Users\ak192\Downloads\cf-tool-frontend-prod (6)\cf-tool-frontend-prod\src\modules\tprm\components\ConductTPRMModal.js
 
+"use client";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import {

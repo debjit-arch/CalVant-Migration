@@ -1,6 +1,9 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useParams} from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
@@ -21,7 +24,7 @@ const ImageWithFallback = ({ src, alt, className }) => {
     "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop";
 
   return (
-    <Image
+    <img
       src={error ? fallback : src}
       alt={alt}
       className={className}
@@ -31,8 +34,7 @@ const ImageWithFallback = ({ src, alt, className }) => {
   );
 };
 
-const BlogPost = () => {
-  const { slug } = useParams();
+const BlogPost = ({ slug }) => {
   const router = useRouter();
   const [post, setPost] = useState(null);
   const [allPosts, setAllPosts] = useState([]);
@@ -218,7 +220,7 @@ const BlogPost = () => {
 
       {/* FEATURED IMAGE — eager load for LCP */}
       <div className="post-featured-image">
-        <Image src={post.imageUrl} alt={post.safeTitle} loading="eager" fetchpriority="high" />
+        <img src={post.imageUrl} alt={post.safeTitle} loading="eager" fetchpriority="high" />
       </div>
 
       {/* CONTENT */}
@@ -268,4 +270,5 @@ const BlogPost = () => {
 };
 
 export default BlogPost;
+
 

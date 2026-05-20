@@ -994,7 +994,7 @@ const Dashboard = () => {
               flex: "10px 0 auto",
             }}
           >
-            <Image
+            <img
               src="/CalVant Logo.svg"
               alt="CalVant"
               width={180}

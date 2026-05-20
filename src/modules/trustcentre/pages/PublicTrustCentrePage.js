@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { Shield, Globe, FileText, CheckCircle2,
@@ -122,7 +123,7 @@ const PublicTrustCentrePage = () => {
               display: "flex", alignItems: "center",
               justifyContent: "center", overflow: "hidden",
             }}>
-              <Image
+              <img
                 src={`${BASE_URL}/api/trust-centre/logo/${tc.organization}`}
                 alt="logo"
                 style={{ width: "100%", height: "100%", objectFit: "contain" }}
@@ -272,3 +273,4 @@ const PublicTrustCentrePage = () => {
 };
 
 export default PublicTrustCentrePage;
+
