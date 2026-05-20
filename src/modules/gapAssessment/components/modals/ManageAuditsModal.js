@@ -575,7 +575,7 @@ export function ManageAuditsModal({ onClose, onSaved, auditors = [] }) {
                       <div style={selectWrapper}>
                         <select value={editBuf.auditType} onChange={(e) => setBuf("auditType", e.target.value)} style={selectStyle}>
                           <option value="">Select type...</option>
-                          {["Internal", "External", "Certification", "Surveillance"].map((t) => <option key={t}>{t}</option>)}
+                          {["Gap Assessment","Internal", "External", "Certification", "Surveillance"].map((t) => <option key={t}>{t}</option>)}
                         </select>
                         <ChevronDown size={15} color="#94a3b8" style={chevronStyle} />
                       </div>
