@@ -166,7 +166,6 @@
 
 // C:\Users\ak192\Downloads\cf-tool-frontend-prod (6)\cf-tool-frontend-prod\src\modules\tprm\components\TPRMQuestionModal.js
 
-"use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, BookOpen, Search, ChevronDown, ChevronUp, Shield } from "lucide-react";

@@ -41,7 +41,7 @@ import Image from "next/image";
 //         className="flex flex-col items-center cursor-pointer"
 //         onClick={() => onOpenFolder(folder.id)}
 //       >
-//         <img
+//         <Image
 //           src="https://img.icons8.com/color/64/000000/folder-invoices.png"
 //           alt="folder icon"
 //           className="w-16 h-16 mb-2"

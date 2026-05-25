@@ -1,6 +1,4 @@
 
-"use client";
-
 import React, { useState, useEffect } from "react";
 import {
   Search,
@@ -53,6 +51,18 @@ function resolveAuditBadge(audit) {
   // }
   const badge = statusBadge(s);
   return { ...badge, label: displayStatus(s) };
+}
+
+
+//date conversion helper in dd-mm-yyyy format, 
+function formatDate(dateString) {
+  if (!dateString) return "—";
+
+  const date = new Date(dateString);
+
+  return date
+    .toLocaleDateString("en-GB")
+    .replace(/\//g, "-");
 }
 
 // ── Shared filter banner ──────────────────────────────────────────────────────
@@ -520,7 +530,7 @@ export function ManageAuditsModal({ onClose, onSaved, auditors = [] }) {
                     </div>
                     <p className="text-sm font-semibold text-slate-800 mb-0.5">{audit.auditType} — {fwMeta.label}</p>
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-400">
-                      <span>Opening: {audit.openingMeetingDate || "—"} · Closure: {audit.closureMeetingDate || "—"}</span>
+                      <span>Opening: {formatDate(audit.openingMeetingDate)} · Closure: {formatDate(audit.closureMeetingDate)}</span>
                       <span>POC: {resolveAuditorName(audit.poc)} · Lead: {resolveAuditorName(audit.leadAuditor)}</span>
                       <span>{(audit.controls || []).length} controls · {(audit.findings || []).length} findings</span>
                     </div>
@@ -575,7 +585,7 @@ export function ManageAuditsModal({ onClose, onSaved, auditors = [] }) {
                       <div style={selectWrapper}>
                         <select value={editBuf.auditType} onChange={(e) => setBuf("auditType", e.target.value)} style={selectStyle}>
                           <option value="">Select type...</option>
-                          {["Gap Assessment","Internal", "External", "Certification", "Surveillance"].map((t) => <option key={t}>{t}</option>)}
+                          {["Internal", "External", "Certification", "Surveillance"].map((t) => <option key={t}>{t}</option>)}
                         </select>
                         <ChevronDown size={15} color="#94a3b8" style={chevronStyle} />
                       </div>

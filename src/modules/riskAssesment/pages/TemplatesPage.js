@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -134,6 +132,202 @@ function RiskLevelPill({ level }) {
   );
 }
 
+
+// ─── Department Dropdown ──────────────────────────────────────────────────────
+const DepartmentDropdown = ({ departments, risks, selected, onSelect }) => {
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+  const ref = React.useRef(null);
+  const inputRef = React.useRef(null);
+  
+
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  React.useEffect(() => {
+    if (open) setTimeout(() => inputRef.current?.focus(), 50);
+    else setQuery("");
+  }, [open]);
+
+  const filtered = departments.filter((d) =>
+    d.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const getCount = (dept) =>
+    dept === "All" ? risks.length : risks.filter((r) => r.department === dept).length;
+
+  const highlight = (text, q) => {
+    if (!q) return <span>{text}</span>;
+    const idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx < 0) return <span>{text}</span>;
+    return (
+      <span>
+        {text.slice(0, idx)}
+        <mark style={{ background: "#fef08a", color: "#713f12", borderRadius: 2, padding: "0 1px", fontWeight: 700 }}>
+          {text.slice(idx, idx + q.length)}
+        </mark>
+        {text.slice(idx + q.length)}
+      </span>
+    );
+  };
+
+  const selectedCount = getCount(selected);
+
+  return (
+    <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
+      {/* Trigger */}
+      <div
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          display: "flex", alignItems: "center", gap: 7,
+          padding: "6px 11px",
+          background: open ? "#fff" : "#f8fafc",
+          border: `1.5px solid ${open ? "#3b82f6" : "#e2e8f0"}`,
+          borderRadius: 8, cursor: "pointer",
+          boxShadow: open ? "0 0 0 3px rgba(59,130,246,.1)" : "none",
+          transition: "all 0.15s", userSelect: "none",
+        }}
+        onMouseEnter={(e) => {
+          if (!open) { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.background = "#fff"; }
+        }}
+        onMouseLeave={(e) => {
+          if (!open) { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; }
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#3b82f6" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+          <rect x="2" y="2" width="12" height="12" rx="2" /><path d="M5 8h6M5 5.5h6M5 10.5h4" />
+        </svg>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#1e293b", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {selected === "All" ? "All Departments" : selected}
+        </span>
+        <span style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", fontSize: 10, fontWeight: 700, padding: "1px 6px", borderRadius: 20, flexShrink: 0 }}>
+          {selectedCount}
+        </span>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="2"
+          style={{ flexShrink: 0, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </div>
+
+      {/* Panel */}
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 6px)", left: 0,
+          background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 12,
+          boxShadow: "0 8px 32px rgba(0,0,0,.12)", zIndex: 999, overflow: "hidden", minWidth: 240,
+        }}>
+          {/* Search */}
+          <div style={{ padding: "10px 10px 8px", borderBottom: "1px solid #f1f5f9", position: "relative" }}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="1.8"
+              style={{ position: "absolute", left: 19, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
+              <circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5l3 3" />
+            </svg>
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search department…"
+              style={{
+                width: "100%", padding: "7px 10px 7px 30px",
+                border: "1.5px solid #e2e8f0", borderRadius: 8,
+                fontSize: 13, color: "#1e293b", background: "#f8fafc",
+                outline: "none", transition: "all 0.15s", boxSizing: "border-box",
+              }}
+              onFocus={(e) => { e.target.style.borderColor = "#3b82f6"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 3px rgba(59,130,246,.1)"; }}
+              onBlur={(e) => { e.target.style.borderColor = "#e2e8f0"; e.target.style.background = "#f8fafc"; e.target.style.boxShadow = "none"; }}
+            />
+          </div>
+
+          {/* List */}
+          <div style={{ maxHeight: 210, overflowY: "auto", padding: 4 }}>
+            {filtered.length === 0 ? (
+              <div style={{ padding: "20px 10px", textAlign: "center", fontSize: 12, color: "#94a3b8" }}>
+                No departments found
+              </div>
+            ) : filtered.map((dept) => {
+              const isActive = dept === selected;
+              const count = getCount(dept);
+              return (
+                <div
+                  key={dept}
+                  onClick={() => { onSelect(dept); setOpen(false); }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "7px 10px", borderRadius: 8, cursor: "pointer",
+                    background: isActive ? "#eff6ff" : "transparent",
+                    transition: "background 0.12s",
+                  }}
+                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = "#f1f5f9"; }}
+                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = "transparent"; }}
+                >
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", flexShrink: 0, opacity: isActive ? 1 : 0, transition: "opacity 0.15s" }} />
+                  <span style={{ flex: 1, fontSize: 13, fontWeight: isActive ? 700 : 500, color: isActive ? "#1d4ed8" : "#475569", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {highlight(dept, query)}
+                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? "#1d4ed8" : "#94a3b8", background: isActive ? "#dbeafe" : "#f1f5f9", padding: "2px 7px", borderRadius: 20, flexShrink: 0 }}>
+                    {count}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Risk Level Chips ─────────────────────────────────────────────────────────
+const LEVEL_STYLES = {
+  All:      { idle: { background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#64748b" }, active: { background: "#eff6ff", border: "1.5px solid #3b82f6", color: "#1d4ed8" } },
+  Critical: { idle: { background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#64748b" }, active: { background: "#fadbd8", border: "1.5px solid #e74c3c", color: "#721c24" } },
+  High:     { idle: { background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#64748b" }, active: { background: "#fdf2e9", border: "1.5px solid #f97316", color: "#9a3412" } },
+  Medium:   { idle: { background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#64748b" }, active: { background: "#fef9e7", border: "1.5px solid #f59e0b", color: "#856404" } },
+  Low:      { idle: { background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#64748b" }, active: { background: "#d5f4e6", border: "1.5px solid #10b981", color: "#155724" } },
+};
+
+function RiskLevelChips({ selected, onSelect }) {
+  const levels = ["All", "Critical", "High", "Medium", "Low"];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
+      {levels.map((level) => {
+        const isActive = selected === level;
+        const s = LEVEL_STYLES[level];
+        return (
+          <button
+            key={level}
+            onClick={() => onSelect(level)}
+            style={{
+              padding: "5px 12px", borderRadius: 20,
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              whiteSpace: "nowrap", transition: "all 0.15s",
+              ...(isActive ? s.active : s.idle),
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.borderColor = "#93c5fd";
+                e.currentTarget.style.background = "#fff";
+                e.currentTarget.style.color = "#1e293b";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                Object.assign(e.currentTarget.style, s.idle);
+              }
+            }}
+          >
+            {level}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 // ─── Main Component ───────────────────────────────────────────────────────────
 const RiskTemplateTable = () => {
   const [risks, setRisks] = useState([]);
@@ -145,6 +339,7 @@ const RiskTemplateTable = () => {
   const [riskToRemove, setRiskToRemove] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [selectedLevel, setSelectedLevel] = useState("All");
   const risksPerPage = 20;
   const router = useRouter();
 
@@ -207,11 +402,20 @@ useEffect(() => {
     ...new Set(risks.map((r) => r.department).filter(Boolean)),
   ];
 
-  const filteredRisks =
-    selectedDepartment === "All"
-      ? risks
-      : risks.filter((r) => r.department === selectedDepartment);
+ const filteredRisks = risks.filter((r) => {
+  // Department filter
+  const departmentMatch =
+    selectedDepartment === "All" ||
+    r.department === selectedDepartment;
 
+  // Risk level filter
+  const riskLevel = String(r.riskLevel || "").toLowerCase();
+  const levelMatch =
+    selectedLevel === "All" ||
+    riskLevel === selectedLevel.toLowerCase();
+
+  return departmentMatch && levelMatch;
+});
   const indexOfLastRisk = currentPage * risksPerPage;
   const indexOfFirstRisk = indexOfLastRisk - risksPerPage;
   const currentRisks = filteredRisks.slice(indexOfFirstRisk, indexOfLastRisk);
@@ -536,92 +740,53 @@ useEffect(() => {
             ))}
           </section>
 
-          {/* ── Department filter chips ── */}
+            {/* ── Toolbar: single horizontal line ── */}
           <div
             style={{
-              background: "rgba(255,255,255,0.7)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(241,245,249,0.8)",
-              borderRadius: 12,
+              background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)",
+              border: "1px solid rgba(241,245,249,0.8)", borderRadius: 12,
               boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-              padding: "12px 16px",
-              marginBottom: 16,
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 8,
-              alignItems: "center",
+              padding: "8px 16px", marginBottom: 16,
+              display: "flex", alignItems: "center", gap: 10,
+              flexWrap: "nowrap", overflow: "visible",
               animation: "fadeUp 0.4s ease 0.2s both",
+              position: "relative", zIndex: 100,
             }}
           >
-            <span
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: "#475569",
-                marginRight: 4,
-                flexShrink: 0,
-              }}
-            >
-              Department:
+            {/* Department label */}
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap", flexShrink: 0 }}>
+              Dept
             </span>
-            {departments.map((dept) => {
-              const active = selectedDepartment === dept;
-              return (
-                <button
-                  key={dept}
-                  onClick={() => {
-                    setSelectedDepartment(dept);
-                    setCurrentPage(1);
-                  }}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 5,
-                    padding: "5px 13px",
-                    borderRadius: 20,
-                    cursor: "pointer",
-                    border: "none",
-                    background: active ? "#eff6ff" : "#f8fafc",
-                    outline: active
-                      ? "1.5px solid #3b82f6"
-                      : "1.5px solid transparent",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: active ? "#1d4ed8" : "#64748b",
-                    boxShadow: active
-                      ? "0 0 0 3px rgba(59,130,246,0.12)"
-                      : "none",
-                    transition: "all 0.15s",
-                  }}
-                >
-                  {active && (
-                    <span
-                      style={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: "50%",
-                        background: "#3b82f6",
-                        flexShrink: 0,
-                      }}
-                    />
-                  )}
-                  {dept}
-                  {dept !== "All" && (
-                    <span
-                      style={{
-                        marginLeft: 2,
-                        fontSize: 10,
-                        fontWeight: 700,
-                        color: active ? "#1d4ed8" : "#94a3b8",
-                      }}
-                    >
-                      {risks.filter((r) => r.department === dept).length}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+
+            <DepartmentDropdown
+              departments={departments}
+              risks={risks}
+              selected={selectedDepartment}
+              onSelect={(dept) => { setSelectedDepartment(dept); setCurrentPage(1); }}
+            />
+
+            {/* Divider */}
+            <div style={{ width: 1, height: 24, background: "#e2e8f0", flexShrink: 0 }} />
+
+            {/* Risk Level label */}
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap", flexShrink: 0 }}>
+              Risk Level
+            </span>
+
+            <RiskLevelChips
+              selected={selectedLevel}
+              onSelect={(level) => { setSelectedLevel(level); setCurrentPage(1); }}
+            />
+
+            {/* Divider */}
+            <div style={{ width: 1, height: 24, background: "#e2e8f0", flexShrink: 0 }} />
+
+            {/* Result count */}
+            <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+              {filteredRisks.length} risk{filteredRisks.length !== 1 ? "s" : ""}
+            </span>
           </div>
+
 
           {/* ── Table card ── */}
           <div

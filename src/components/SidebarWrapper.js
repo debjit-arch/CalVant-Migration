@@ -7,7 +7,7 @@ export default function SidebarWrapper() {
   const { isAuthenticated } = useSession();
   const pathname = usePathname();
 
-  const authRoutes = ["/login", "/register", "/forgot-password"];
+  const authRoutes = ["/login", "/register", "/forgot-password", "/auth-bridge"];
   const isAuthPage = authRoutes.includes(pathname);
 
   if (!isAuthenticated || isAuthPage) return null;

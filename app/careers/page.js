@@ -1,5 +1,6 @@
-import CareersPage from "@/static-pages/careers";
+"use client";
 
-export default function Careers(){
-    return <CareersPage/>
+import CareersPage from "@/static-pages/careers";
+export default function Page() {
+  return <CareersPage />;
 }

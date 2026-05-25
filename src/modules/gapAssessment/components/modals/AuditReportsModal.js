@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { AlertTriangle, Target, FileText, X, Download } from "lucide-react";
 import { Modal, ModalHeader, Spinner } from "../ui";

@@ -3,7 +3,7 @@ import { ChevronRight, ShieldCheck, Clock, AlertCircle } from "lucide-react";
 import { Modal, ModalHeader, Spinner } from "./ui";
 import { getSessionUser } from "../utils/helpers";
 import * as dpiaApi from "../services/dpiaApi";
-import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import { useRouter } from "next/navigation";
 import { captureActivity, ACTIONS } from "../../../services/activities";
 // ─── helpers ──────────────────────────────────────────────────────────────────
 function assignmentBadge(status) {

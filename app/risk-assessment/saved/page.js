@@ -1,14 +1,23 @@
-// app/risk-assessment/saved/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
+"use client";
+
+import RoleBasedPage from "@/components/RoleBasedPage";
 import SavedRisksPage from "@/modules/riskAssesment/pages/SavedRisksPage";
 
-export default function RiskAssessmentSavedRoute() {
+const allowedRoles = [
+  "risk_owner",
+  "risk_identifier",
+  "risk_manager",
+  "super_admin",
+  "root",
+  "dpo",
+  "ciso",
+  "aio",
+];
+
+export default function Page() {
   return (
-    <ProtectedPage>
-      <FrameworkPage moduleKey="riskAssesment">
-        <SavedRisksPage />
-      </FrameworkPage>
-    </ProtectedPage>
+    <RoleBasedPage allowedRoles={allowedRoles}>
+      <SavedRisksPage />
+    </RoleBasedPage>
   );
 }

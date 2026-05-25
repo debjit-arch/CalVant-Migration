@@ -1,6 +1,6 @@
+import Link from 'next/link';
 import React from "react";
 import BlogNavbar from "./BlogNavbar";
-import Link from "next/link";
 import "../styles/ProfessionalLayout.css";
 
 const ContentLayout = ({ children, narrow = false, heroSection = null }) => {
@@ -26,13 +26,13 @@ const ContentLayout = ({ children, narrow = false, heroSection = null }) => {
 
       <footer className="blog-footer">
         <div className="professional-container">
-          <div className="blog-footer-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <div className="footer-links" style={{ display: 'flex', gap: '24px', fontSize: '14px' }}>
-              <Link href="/privacy" style={{ color: '#9ca3af', textDecoration: 'none' }}>Privacy Policy</Link>
-              <Link href="/terms" style={{ color: '#9ca3af', textDecoration: 'none' }}>Terms of Service</Link>
-              <Link href="/security" style={{ color: '#9ca3af', textDecoration: 'none' }}>Security</Link>
+          <div className="blog-footer-content">
+            <div className="footer-links">
+              <Link href="/privacy">Privacy Policy</Link>
+              <Link href="/terms">Terms of Service</Link>
+              <Link href="/security">Security</Link>
             </div>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>
+            <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>
               &copy; {new Date().getFullYear()} CalVant. All rights reserved.
             </p>
           </div>

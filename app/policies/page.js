@@ -1,5 +1,9 @@
-import PoliciesPage from "@/modules/dashboard/Template/Policies";
+"use client";
 
-export default function Policy(){
-    return <PoliciesPage/>
+import dynamic from 'next/dynamic';
+
+const Policies = dynamic(() => import('@/modules/dashboard/Template/Policies'), { ssr: false });
+
+export default function Page() {
+  return <Policies />;
 }

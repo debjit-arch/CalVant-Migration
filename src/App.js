@@ -1,3 +1,6 @@
+//C:\Users\ak192\Downloads\calvant-frontend-2-cv_nextjs4\calvant-frontend-2-cv_nextjs4\src\App.js
+
+
 import {
   BrowserRouter as Router,
   Route,
@@ -93,6 +96,7 @@ import Procedures from "./modules/dashboard/Template/Procedures";
 import AboutPage from "./static-pages/about";
 import BlogPage from "./static-pages/blog";
 import BlogPost from "./static-pages/BlogPost";
+import DATASHEETS  from "./static-pages/datasheet";
 import CareersPage from "./static-pages/careers";
 import PrivacyPage from "./static-pages/privacy";
 import TermsPage from "./static-pages/terms";
@@ -220,7 +224,8 @@ useEffect(() => {
   }
 }, []);
   const isLoggedIn = !!user;
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   useActivityLogger(); // Auto PAGE_LOAD logs
 
   return (
@@ -260,6 +265,8 @@ const AppRoutes = () => {
       </Route>
       <Route exact path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogPost} />
+     
+
 
       {/* SEPARATE STATIC ROUTES */}
       <Route path="/privacy">
@@ -274,7 +281,7 @@ const AppRoutes = () => {
       <Route path="/about">
         <FooterContentPage type="about" />
       </Route>
-
+   
       {/* FRAMEWORKS & TEMPLATES */}
       <Route path="/iso-27001" component={ISO_27001} />
       <Route path="/iso-27701" component={ISO_27701} />

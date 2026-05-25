@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, ProgressCircle } from 'lucide-react';
 import { stage2Api } from '../services/aiiaApi';

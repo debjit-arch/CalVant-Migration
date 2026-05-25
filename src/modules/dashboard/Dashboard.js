@@ -1,6 +1,6 @@
 "use client";
+import Link from 'next/link';
 import Image from "next/image";
-import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FRAMEWORK_CONFIG } from "../../context/frameworkService";
@@ -994,7 +994,7 @@ const Dashboard = () => {
               flex: "10px 0 auto",
             }}
           >
-            <img
+            <Image
               src="/CalVant Logo.svg"
               alt="CalVant"
               width={180}
@@ -1540,9 +1540,7 @@ const Dashboard = () => {
               <li>
                 <Link href="/about">About</Link>
               </li>
-              <li>
-                <Link href="/blog">Blog</Link>
-              </li>
+             
               <li>
                 <Link href="/careers">Careers</Link>
               </li>
@@ -1559,6 +1557,20 @@ const Dashboard = () => {
               </li>
               <li>
                 <Link href="/security">Security</Link>
+              </li>
+            </ul>
+          </div>
+           <div className="dashboard-footer-section">
+            <h4>Resources</h4>
+            <ul>
+              <li>
+                <Link href="/blog">Blogs</Link>
+              </li>
+              <li>
+                <Link href="/datasheet">Datasheet</Link>
+              </li>
+              <li>
+                <Link href="   ">Whitepaper</Link>
               </li>
             </ul>
           </div>

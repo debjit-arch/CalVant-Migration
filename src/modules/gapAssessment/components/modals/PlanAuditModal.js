@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   ChevronDown,
@@ -897,7 +895,7 @@ export function PlanAuditModal(props) {
               <div style={{ position: "relative" }}>
                 <select value={form.auditType} onChange={e => setField("auditType", e.target.value)} style={selectStyle}>
                   <option value="">Select type...</option>
-                  {["Gap Assessment","Internal","External","Certification","Surveillance"].map(t => <option key={t}>{t}</option>)}
+                  {["Internal","External","Certification","Surveillance"].map(t => <option key={t}>{t}</option>)}
                 </select>
                 <ChevronDown size={15} color="#94a3b8" style={{ position: "absolute", right: 12, top: 12, pointerEvents: "none" }} />
               </div>

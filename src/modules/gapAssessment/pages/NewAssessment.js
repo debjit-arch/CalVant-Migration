@@ -1,6 +1,4 @@
 // src/modules/gapAssessment/pages/NewAssessment.js
-"use client";
-
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import controlService from "../services/controlService";
 import documentationService from "../../documentation/services/documentationService";

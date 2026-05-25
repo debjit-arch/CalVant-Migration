@@ -30,7 +30,7 @@ export const FRAMEWORK_CONFIG = {
   SOC2: {
     label: "SOC 2",
     color: "#ff9900",
-    path: "/soc-2",
+    path: "/soc2",
     sub: "Trust Services",
     description: "Trust Services Criteria",
     riskTypes: ["Security", "Cyber", "Privacy"],
@@ -85,6 +85,29 @@ export const FRAMEWORK_CONFIG = {
     annexSectionTypes: ["OBLIGATIONS", "RIGHTS", "COMPLIANCE"],
     isMapped: true,
     mappingSources: ["ISO27701"],
+  },
+  
+  DUBAI_ISR: {
+    label: "DUBAI ISR",
+    color: "#a1ff35",
+    path: "/isr",
+    sub: "Dubai Imformation Security Regulation",
+    description: "Information Security Regulation",
+    riskTypes: ["Security"],
+    annexSectionTypes: ["OBLIGATIONS", "RIGHTS", "COMPLIANCE"],
+    isMapped: true,
+    mappingSources: ["ISO27001", "SOC2", "ISO27701"],
+  },
+  NIST_CSF2: {
+    label: "NIST CSF 2",
+    color: "#7c3aed",
+    path: "/nist-csf-2",
+    sub: "Cybersecurity Framework",
+    description: "National Institute of Standards and Technology Cybersecurity Framework",
+    riskTypes: ["Security", "Cyber"],
+    annexSectionTypes: ["GOVERN", "IDENTIFY", "PROTECT", "DETECT", "RESPOND", "RECOVER"],
+    isMapped: true,
+    mappingSources: ["ISO27001", "SOC2", "DUBAI_ISR"],
   },
 };
 

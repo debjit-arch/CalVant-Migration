@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -315,7 +313,7 @@ const SavedRisksPage = () => {
     localStorage.setItem("lastEditedRiskId", riskId);
     setNewlyCreatedRiskId(null);
     localStorage.removeItem("newlyCreatedRiskId");
-    router.push("/risk-assessment/add", { editRiskId: riskId });
+    router.push(`/risk-assessment/add?editRiskId=${encodeURIComponent(riskId)}`);
   };
 
   const handleDeleteRisk = async (riskId) => {

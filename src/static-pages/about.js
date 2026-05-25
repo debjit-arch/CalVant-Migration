@@ -30,7 +30,18 @@ const AboutPage = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     setMounted(true);
     setIsLoggedIn(!!sessionStorage.getItem("user"));
@@ -49,14 +60,33 @@ const AboutPage = () => {
     <div className={`about-page ${mounted ? "mounted" : ""}`}>
       <header className="about-header">
         <div className="about-header-content">
-          <div className="about-logo-section">
-            <img
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flex: "10px 0 auto",
+            }}
+          >
+            <Image
               src="/CalVant Logo.svg"
               alt="CalVant"
-              width={210}
-              height={210}
-              style={{ height: "210px", width: "auto", cursor: "pointer" }}
-              onClick={()=>router.push("/")}
+              width={180}
+              height={60}
+              style={{
+                height: isMobile ? "30px" : "60px",
+                width: "auto",
+                transform: isMobile ? "scale(3.9)" : "scale(2.9)",
+                transformOrigin: "center",
+                cursor: "pointer",
+                transition: "transform 0.25s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(3.7)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(3.5)";
+              }}
+              onClick={() => router.push("/")}
             />
           </div>
           <nav className="about-header-nav">

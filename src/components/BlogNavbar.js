@@ -1,7 +1,6 @@
-"use client";
-import Link from "next/link";
+import Link from 'next/link';
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
@@ -9,8 +8,21 @@ const BlogNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const isLoggedIn =
-    typeof window !== "undefined" && !!sessionStorage.getItem("user");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(!!sessionStorage.getItem("user"));
+    }
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const isActive = (path) => {
     if (path === "/blog") return pathname.startsWith("/blog");
@@ -20,8 +32,34 @@ const BlogNavbar = () => {
   return (
     <header className="blog-header">
       <div className="blog-header-container">
-        <div className="blog-logo" onClick={() => router.push("/")}>
-          <img src="/image.png" alt="CalVant" />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flex: "10px 0 auto",
+          }}
+        >
+          <Image
+            src="/CalVant Logo.svg"
+            alt="CalVant"
+            width={180}
+            height={60}
+            style={{
+              height: isMobile ? "30px" : "60px",
+              width: "auto",
+              transform: isMobile ? "scale(3.9)" : "scale(2.9)",
+              transformOrigin: "center",
+              cursor: "pointer",
+              transition: "transform 0.25s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(3.7)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(3.5)";
+            }}
+            onClick={() => router.push("/")}
+          />
         </div>
         <nav className="blog-nav">
           <button
@@ -77,3 +115,5 @@ const BlogNavbar = () => {
 };
 
 export default BlogNavbar;
+
+

@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState, useEffect, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import RiskDetailsForm from "./RiskDetailsForm";
 import TreatmentPlanForm from "./TreatmentPlanForm";
 import ResidualRiskForm from "./ResidualRiskForm";
@@ -156,7 +154,8 @@ const MultiStepFormManager = ({ onSubmit, focusArea = "risk" }) => {
   const pathname = usePathname();
   const { selectedFrameworks, isAllSelected } = useFramework();
 
-  const existingRiskId = location.state?.editRiskId;
+  const searchParams = useSearchParams();
+  const existingRiskId = searchParams.get("editRiskId");
   const isEditing = !!existingRiskId;
 
   const [modal, setModal] = useState({ isOpen: false, title: "", message: "" });
@@ -335,7 +334,7 @@ const MultiStepFormManager = ({ onSubmit, focusArea = "risk" }) => {
       ];
       captureActivity({
         action: ACTIONS.SELECT,
-        url: window.pathname,
+        url: window.location.pathname,
         item: [
           {
             step: nextStep,
@@ -366,7 +365,7 @@ const MultiStepFormManager = ({ onSubmit, focusArea = "risk" }) => {
       ];
       captureActivity({
         action: isEditing ? ACTIONS.UPDATE : ACTIONS.CREATE,
-        url: window.pathname,
+        url: window.location.pathname,
         item: [
           {
             riskId: formData.riskId,
@@ -418,7 +417,7 @@ const MultiStepFormManager = ({ onSubmit, focusArea = "risk" }) => {
       // Log final submission
       captureActivity({
         action: isEditing ? ACTIONS.UPDATE : ACTIONS.CREATE,
-        url: window.pathname,
+        url: window.location.pathname,
         item: [
           {
             riskId: formData.riskId,

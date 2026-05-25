@@ -9,7 +9,7 @@ export default function ProtectedPage({ children }) {
 
   useEffect(() => {
     if (isAuthenticated === false) {
-      router.replace("/");
+      router.replace("/login");
     }
   }, [isAuthenticated]);
 

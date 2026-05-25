@@ -37,7 +37,7 @@ body {
 
 .page-header {
   margin-bottom: 30px;
-  text-align: center;
+  text-align: left;
 }
 
 .page-header h1 {
@@ -49,3 +49,12 @@ body {
   color: #666;
   font-size: 16px;
 }
+
+/* Force all module dashboard and page headers to be left-aligned under all dynamic states */
+#dashboard-header,
+.dashboard-header,
+main header,
+.page-header {
+  text-align: left !important;
+}
+

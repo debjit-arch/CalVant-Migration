@@ -1,5 +1,6 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Save, X, Check } from 'lucide-react';
 import { stage2Api, stage1Api } from '../services/aiiaApi';
 

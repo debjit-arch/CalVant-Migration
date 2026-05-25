@@ -1,12 +1,11 @@
-// app/task-management/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import TaskManagementDashboard from "@/modules/taskManagement/pages/TaskManagementDashboard";
+"use client";
 
-export default function TaskManagementRoute() {
+import ProtectedPage from "@/components/ProtectedPage";
+import TaskManagementDashboard from "@/modules/taskManagement/pages/TaskManagementDashboard";
+export default function Page() {
   return (
     <ProtectedPage>
-        <TaskManagementDashboard />
+      <TaskManagementDashboard />
     </ProtectedPage>
   );
 }

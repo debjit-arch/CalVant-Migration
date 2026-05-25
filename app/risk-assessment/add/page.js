@@ -1,12 +1,14 @@
-// app/risk-assessment/add/page.js
+//app/risk-assessment/add/page.js 
+
+"use client";
+
 import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
 import AddRisk from "@/modules/riskAssesment/pages/AddRisk";
 
-export default function RiskAssessmentAddRoute() {
+export default function Page() {
   return (
     <ProtectedPage>
-        <AddRisk />
+      <AddRisk />
     </ProtectedPage>
   );
 }

@@ -1,6 +1,8 @@
 
 //C:\Users\ak192\Downloads\cf-tool-frontend-prod (5)\cf-tool-frontend-prod\src\modules\riskAssesment\pages\MyTasks.js
+
 "use client";
+
 
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -167,7 +169,7 @@ function buildGridCols(containerWidth) {
 
 // ─── Main Component ───────────────────────────────────────────
 const MyTasks = ({ riskId = null }) => {
-  const history         = useHistory();
+  const router          = useRouter();
   const rawUser         = sessionStorage.getItem("user");
   const user            = rawUser ? JSON.parse(rawUser) : null;
   const currentUserName = user?.name || user?.username || "";

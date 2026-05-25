@@ -324,89 +324,98 @@ const SoaPage = () => {
   }, [availableFrameworks]);
 
   // ── Bootstrap controls ─────────────────────────────────────────────────
-  useEffect(() => {
-    if (availableFrameworks.length === 0) return;
-
-    const fetchControls = async () => {
-      try {
-        const [user, setUser] = useState(null);
-
 useEffect(() => {
-  const storedUser = sessionStorage.getItem("user");
+  if (availableFrameworks.length === 0) return;
 
-  if (storedUser) {
-    setUser(JSON.parse(storedUser));
-  }
-}, []);
+  const fetchControls = async () => {
+    try {
+      // Read user directly from sessionStorage (no hooks here)
+      const storedUser = sessionStorage.getItem("user");
+      const user = storedUser ? JSON.parse(storedUser) : null;
 
-        const [savedControls, soaEntries, ...fwResults] = await Promise.all([
-          documentationService.getControls(),
-          documentationService.getSoAEntries(),
-          ...availableFrameworks.map((fw) =>
-            controlService.getControlsByFramework(fw.code).catch(() => [])
-          ),
-        ]);
+      const [savedControls, soaEntries, ...fwResults] = await Promise.all([
+        documentationService.getControls(),
+        documentationService.getSoAEntries(),
+        ...availableFrameworks.map((fw) =>
+          controlService.getControlsByFramework(fw.code).catch(() => [])
+        ),
+      ]);
 
-        const soaByControlCode = {};
-        soaEntries
-          .filter((e) => e.organization === user?.organization)
-          .forEach((e) => {
-            const fw  = e.framework || "";
-            const key = fw ? `${fw}:${String(e.category)}` : String(e.category);
-            if (!soaByControlCode[key]) soaByControlCode[key] = e;
-          });
+      const soaByControlCode = {};
+      soaEntries
+        .filter((e) => e.organization === user?.organization)
+        .forEach((e) => {
+          const fw = e.framework || "";
+          const key = fw
+            ? `${fw}:${String(e.category)}`
+            : String(e.category);
 
-        const orgSavedByCategory = {};
-        savedControls
-          .filter((c) => c.organization === user?.organization)
-          .forEach((c) => { orgSavedByCategory[c.category] = c; });
-
-        const rows      = [];
-        const addedCodes = new Set();
-
-        availableFrameworks.forEach((fw, idx) => {
-          const backendList = fwResults[idx] || [];
-          backendList.forEach((ctrl) => {
-            const uniqueKey = `${fw.code}:${ctrl.controlCode}`;
-            if (addedCodes.has(uniqueKey)) return;
-            addedCodes.add(uniqueKey);
-
-            const soaEntry =
-              soaByControlCode[`${fw.code}:${ctrl.controlCode}`] ||
-              soaByControlCode[ctrl.controlCode] ||
-              null;
-            const savedCtrl = orgSavedByCategory[ctrl.controlCode] || null;
-
-            // Default applicable: SOC2-like "always on" heuristic preserved per framework
-            const defaultApplicable = !!soaEntry;
-            let defaultJustification = "";
-            if (soaEntry?.justification)        defaultJustification = soaEntry.justification;
-            else if (savedCtrl?.justification)  defaultJustification = savedCtrl.justification;
-            else if (soaEntry)                  defaultJustification = "Risk Identified";
-
-            rows.push({
-              id:            `${fw.code}:${ctrl.controlCode}`,
-              soaId:         soaEntry?.id || null,
-              controlCode:   ctrl.controlCode,
-              description:   ctrl.description || ctrl.title || "",
-              framework:     fw.code,
-              soaEntry,
-              isApplicable:  defaultApplicable,
-              justification: defaultJustification,
-              savedId:       savedCtrl?.id || null,
-            });
-          });
+          if (!soaByControlCode[key]) {
+            soaByControlCode[key] = e;
+          }
         });
 
-        setAllRows(rows);
-      } catch (error) {
-        console.error("Error fetching controls:", error);
-      }
-    };
+      const orgSavedByCategory = {};
+      savedControls
+        .filter((c) => c.organization === user?.organization)
+        .forEach((c) => {
+          orgSavedByCategory[c.category] = c;
+        });
 
-    fetchControls();
-  }, [availableFrameworks]);
+      const rows = [];
+      const addedCodes = new Set();
 
+      availableFrameworks.forEach((fw, idx) => {
+        const backendList = fwResults[idx] || [];
+
+        backendList.forEach((ctrl) => {
+          const uniqueKey = `${fw.code}:${ctrl.controlCode}`;
+
+          if (addedCodes.has(uniqueKey)) return;
+          addedCodes.add(uniqueKey);
+
+          const soaEntry =
+            soaByControlCode[`${fw.code}:${ctrl.controlCode}`] ||
+            soaByControlCode[ctrl.controlCode] ||
+            null;
+
+          const savedCtrl =
+            orgSavedByCategory[ctrl.controlCode] || null;
+
+          // Default applicable if an SoA entry already exists
+          const defaultApplicable = !!soaEntry;
+
+          let defaultJustification = "";
+          if (soaEntry?.justification) {
+            defaultJustification = soaEntry.justification;
+          } else if (savedCtrl?.justification) {
+            defaultJustification = savedCtrl.justification;
+          } else if (soaEntry) {
+            defaultJustification = "Risk Identified";
+          }
+
+          rows.push({
+            id: `${fw.code}:${ctrl.controlCode}`,
+            soaId: soaEntry?.id || null,
+            controlCode: ctrl.controlCode,
+            description: ctrl.description || ctrl.title || "",
+            framework: fw.code,
+            soaEntry,
+            isApplicable: defaultApplicable,
+            justification: defaultJustification,
+            savedId: savedCtrl?.id || null,
+          });
+        });
+      });
+
+      setAllRows(rows);
+    } catch (error) {
+      console.error("Error fetching controls:", error);
+    }
+  };
+
+  fetchControls();
+}, [availableFrameworks]);
   // ── Filtered + sorted rows ──────────────────────────────────────────────
   const filteredRows = useMemo(() => {
     let list = [...allRows];

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileText,
@@ -29,15 +29,25 @@ const BASE_URL = "https://api.calvant.com/task-service"; // ← change to your b
 const POLL_INTERVAL_MS = 60_000;
 
 const TYPE_META = {
-  OVERDUE:  { label: "Overdue",  color: "#ef4444", bg: "#fef2f2", Icon: Clock     },
-  ASSIGNED: { label: "Assigned", color: "#3b82f6", bg: "#eff6ff", Icon: UserCheck },
-  UPDATED:  { label: "Updated",  color: "#f59e0b", bg: "#fffbeb", Icon: RefreshCw },
+  OVERDUE: { label: "Overdue", color: "#ef4444", bg: "#fef2f2", Icon: Clock },
+  ASSIGNED: {
+    label: "Assigned",
+    color: "#3b82f6",
+    bg: "#eff6ff",
+    Icon: UserCheck,
+  },
+  UPDATED: {
+    label: "Updated",
+    color: "#f59e0b",
+    bg: "#fffbeb",
+    Icon: RefreshCw,
+  },
 };
 
 const timeAgo = (dateStr) => {
   const diff = Date.now() - new Date(dateStr).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1)  return "just now";
+  if (m < 1) return "just now";
   if (m < 60) return `${m}m ago`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
@@ -50,10 +60,10 @@ const timeAgo = (dateStr) => {
 
 const NotificationBell = ({ userId }) => {
   const [notifications, setNotifications] = useState([]);
-  const [open, setOpen]                   = useState(false);
-  const [tab, setTab]                     = useState("ALL");
-  const [loading, setLoading]             = useState(false);
-  const panelRef                          = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState("ALL");
+  const [loading, setLoading] = useState(false);
+  const panelRef = useRef(null);
 
   // ── API helpers ──────────────────────────────
 
@@ -63,10 +73,10 @@ const NotificationBell = ({ userId }) => {
     try {
       await fetch(
         `${BASE_URL}/api/notifications/generate?userId=${encodeURIComponent(userId)}`,
-        { method: "POST" }
+        { method: "POST" },
       );
-      const res  = await fetch(
-        `${BASE_URL}/api/notifications?userId=${encodeURIComponent(userId)}`
+      const res = await fetch(
+        `${BASE_URL}/api/notifications?userId=${encodeURIComponent(userId)}`,
       );
       const data = await res.json();
       setNotifications(data);
@@ -80,14 +90,14 @@ const NotificationBell = ({ userId }) => {
   const markOneRead = async (id) => {
     await fetch(`${BASE_URL}/api/notifications/${id}/read`, { method: "PUT" });
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
     );
   };
 
   const markAllRead = async () => {
     await fetch(
       `${BASE_URL}/api/notifications/read-all?userId=${encodeURIComponent(userId)}`,
-      { method: "PUT" }
+      { method: "PUT" },
     );
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
   };
@@ -118,15 +128,16 @@ const NotificationBell = ({ userId }) => {
   // ── Derived ──────────────────────────────────
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
-  const filtered    = tab === "ALL"
-    ? notifications
-    : notifications.filter((n) => n.type === tab);
+  const filtered =
+    tab === "ALL" ? notifications : notifications.filter((n) => n.type === tab);
 
   // ── Render ───────────────────────────────────
 
   return (
-    <div ref={panelRef} style={{ position: "relative", display: "flex", alignItems: "center" }}>
-
+    <div
+      ref={panelRef}
+      style={{ position: "relative", display: "flex", alignItems: "center" }}
+    >
       {/* Bell button */}
       <motion.button
         whileHover={{ scale: 1.08 }}
@@ -134,11 +145,14 @@ const NotificationBell = ({ userId }) => {
         onClick={() => setOpen((p) => !p)}
         style={{
           position: "relative",
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           borderRadius: "50%",
           border: "none",
           background: open ? "#f1f5f9" : "transparent",
-          display: "flex", alignItems: "center", justifyContent: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           cursor: "pointer",
           color: "#64748b",
           transition: "background 0.15s",
@@ -152,13 +166,19 @@ const NotificationBell = ({ userId }) => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             style={{
-              position: "absolute", top: 4, right: 4,
-              minWidth: 16, height: 16,
+              position: "absolute",
+              top: 4,
+              right: 4,
+              minWidth: 16,
+              height: 16,
               borderRadius: 8,
               background: "#ef4444",
               color: "white",
-              fontSize: 10, fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 10,
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               padding: "0 4px",
               border: "2px solid white",
             }}
@@ -193,17 +213,35 @@ const NotificationBell = ({ userId }) => {
             }}
           >
             {/* Header */}
-            <div style={{
-              padding: "14px 16px 10px",
-              borderBottom: "1px solid #f1f5f9",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-            }}>
+            <div
+              style={{
+                padding: "14px 16px 10px",
+                borderBottom: "1px solid #f1f5f9",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <div>
-                <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#0f172a" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontWeight: 700,
+                    fontSize: 14,
+                    color: "#0f172a",
+                  }}
+                >
                   Notifications
                 </p>
                 {unreadCount > 0 && (
-                  <p style={{ margin: 0, fontSize: 11, color: "#64748b", marginTop: 1 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 11,
+                      color: "#64748b",
+                      marginTop: 1,
+                    }}
+                  >
                     {unreadCount} unread
                   </p>
                 )}
@@ -214,11 +252,17 @@ const NotificationBell = ({ userId }) => {
                     onClick={markAllRead}
                     title="Mark all as read"
                     style={{
-                      display: "flex", alignItems: "center", gap: 4,
-                      padding: "4px 10px", borderRadius: 8,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                      padding: "4px 10px",
+                      borderRadius: 8,
                       border: "1px solid #e2e8f0",
-                      background: "white", cursor: "pointer",
-                      fontSize: 11, color: "#3b82f6", fontWeight: 600,
+                      background: "white",
+                      cursor: "pointer",
+                      fontSize: 11,
+                      color: "#3b82f6",
+                      fontWeight: 600,
                     }}
                   >
                     <CheckCheck size={13} /> All read
@@ -229,28 +273,43 @@ const NotificationBell = ({ userId }) => {
                   onClick={generateAndFetch}
                   title="Refresh"
                   style={{
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    width: 28, height: 28, borderRadius: 8,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
                     border: "1px solid #e2e8f0",
                     background: loading ? "#f8fafc" : "white",
-                    cursor: "pointer", color: "#64748b",
+                    cursor: "pointer",
+                    color: "#64748b",
                   }}
                 >
-                  <RefreshCw size={13} style={loading ? { animation: "spin 1s linear infinite" } : {}} />
+                  <RefreshCw
+                    size={13}
+                    style={
+                      loading ? { animation: "spin 1s linear infinite" } : {}
+                    }
+                  />
                 </motion.button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div style={{
-              display: "flex", gap: 4,
-              padding: "8px 12px 0",
-              borderBottom: "1px solid #f1f5f9",
-            }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 4,
+                padding: "8px 12px 0",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
               {["ALL", "OVERDUE", "ASSIGNED", "UPDATED"].map((t) => {
-                const count = t === "ALL"
-                  ? notifications.filter((n) => !n.isRead).length
-                  : notifications.filter((n) => n.type === t && !n.isRead).length;
+                const count =
+                  t === "ALL"
+                    ? notifications.filter((n) => !n.isRead).length
+                    : notifications.filter((n) => n.type === t && !n.isRead)
+                        .length;
                 const active = tab === t;
                 return (
                   <button
@@ -258,22 +317,33 @@ const NotificationBell = ({ userId }) => {
                     onClick={() => setTab(t)}
                     style={{
                       padding: "6px 12px 8px",
-                      border: "none", background: "none", cursor: "pointer",
-                      fontSize: 12, fontWeight: active ? 700 : 500,
+                      border: "none",
+                      background: "none",
+                      cursor: "pointer",
+                      fontSize: 12,
+                      fontWeight: active ? 700 : 500,
                       color: active ? "#3b82f6" : "#64748b",
-                      borderBottom: active ? "2px solid #3b82f6" : "2px solid transparent",
-                      display: "flex", alignItems: "center", gap: 5,
+                      borderBottom: active
+                        ? "2px solid #3b82f6"
+                        : "2px solid transparent",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
                       transition: "all 0.15s",
                     }}
                   >
                     {t}
                     {count > 0 && (
-                      <span style={{
-                        background: active ? "#3b82f6" : "#e2e8f0",
-                        color: active ? "white" : "#64748b",
-                        borderRadius: 10, fontSize: 10, fontWeight: 700,
-                        padding: "1px 6px",
-                      }}>
+                      <span
+                        style={{
+                          background: active ? "#3b82f6" : "#e2e8f0",
+                          color: active ? "white" : "#64748b",
+                          borderRadius: 10,
+                          fontSize: 10,
+                          fontWeight: 700,
+                          padding: "1px 6px",
+                        }}
+                      >
                         {count}
                       </span>
                     )}
@@ -285,7 +355,14 @@ const NotificationBell = ({ userId }) => {
             {/* List */}
             <div style={{ overflowY: "auto", flex: 1 }}>
               {loading && notifications.length === 0 ? (
-                <div style={{ padding: 32, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>
+                <div
+                  style={{
+                    padding: 32,
+                    textAlign: "center",
+                    color: "#94a3b8",
+                    fontSize: 13,
+                  }}
+                >
                   Loading…
                 </div>
               ) : filtered.length === 0 ? (
@@ -309,7 +386,9 @@ const NotificationBell = ({ userId }) => {
                         transition={{ duration: 0.15 }}
                         onClick={() => !n.isRead && markOneRead(n.id)}
                         style={{
-                          display: "flex", alignItems: "flex-start", gap: 10,
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: 10,
                           padding: "12px 14px",
                           background: n.isRead ? "white" : "#f8faff",
                           borderBottom: "1px solid #f8fafc",
@@ -319,42 +398,80 @@ const NotificationBell = ({ userId }) => {
                         }}
                       >
                         {/* Type icon */}
-                        <div style={{
-                          width: 32, height: 32, borderRadius: 10, flexShrink: 0,
-                          background: meta.bg,
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                        }}>
+                        <div
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 10,
+                            flexShrink: 0,
+                            background: meta.bg,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
                           <Icon size={15} color={meta.color} />
                         </div>
 
                         {/* Content */}
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                            <span style={{
-                              fontSize: 10, fontWeight: 700, color: meta.color,
-                              background: meta.bg, padding: "1px 7px", borderRadius: 8,
-                            }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 6,
+                              marginBottom: 2,
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 700,
+                                color: meta.color,
+                                background: meta.bg,
+                                padding: "1px 7px",
+                                borderRadius: 8,
+                              }}
+                            >
                               {meta.label}
                             </span>
                             <span style={{ fontSize: 10, color: "#94a3b8" }}>
                               {n.taskId}
                             </span>
                             {!n.isRead && (
-                              <span style={{
-                                width: 6, height: 6, borderRadius: "50%",
-                                background: "#3b82f6", marginLeft: "auto", flexShrink: 0,
-                              }} />
+                              <span
+                                style={{
+                                  width: 6,
+                                  height: 6,
+                                  borderRadius: "50%",
+                                  background: "#3b82f6",
+                                  marginLeft: "auto",
+                                  flexShrink: 0,
+                                }}
+                              />
                             )}
                           </div>
-                          <p style={{
-                            margin: 0, fontSize: 12, color: "#334155",
-                            lineHeight: 1.4,
-                            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-                            maxWidth: 260,
-                          }}>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 12,
+                              color: "#334155",
+                              lineHeight: 1.4,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              maxWidth: 260,
+                            }}
+                          >
                             {n.message}
                           </p>
-                          <p style={{ margin: "3px 0 0", fontSize: 11, color: "#94a3b8" }}>
+                          <p
+                            style={{
+                              margin: "3px 0 0",
+                              fontSize: 11,
+                              color: "#94a3b8",
+                            }}
+                          >
                             {timeAgo(n.createdAt)}
                           </p>
                         </div>
@@ -363,9 +480,14 @@ const NotificationBell = ({ userId }) => {
                         <button
                           onClick={(e) => deleteOne(n.id, e)}
                           style={{
-                            border: "none", background: "none", cursor: "pointer",
-                            color: "#cbd5e1", padding: 2, flexShrink: 0,
-                            display: "flex", alignItems: "center",
+                            border: "none",
+                            background: "none",
+                            cursor: "pointer",
+                            color: "#cbd5e1",
+                            padding: 2,
+                            flexShrink: 0,
+                            display: "flex",
+                            alignItems: "center",
                           }}
                           title="Dismiss"
                         >
@@ -380,12 +502,15 @@ const NotificationBell = ({ userId }) => {
 
             {/* Footer */}
             {notifications.length > 0 && (
-              <div style={{
-                padding: "8px 14px",
-                borderTop: "1px solid #f1f5f9",
-                textAlign: "center",
-                fontSize: 11, color: "#94a3b8",
-              }}>
+              <div
+                style={{
+                  padding: "8px 14px",
+                  borderTop: "1px solid #f1f5f9",
+                  textAlign: "center",
+                  fontSize: 11,
+                  color: "#94a3b8",
+                }}
+              >
                 {notifications.length} total · refreshes every 60s
               </div>
             )}
@@ -678,22 +803,26 @@ const Maindashboard_profile = () => {
           whileTap={{ scale: 0.95 }}
           onClick={startTutorial}
           className="
-            px-3 sm:px-4 md:px-[22px]
-            py-1.5 sm:py-2
-            text-white font-semibold tracking-[0.3px]
-            text-[11px] sm:text-[13px] md:text-[14px]
-            rounded-xl sm:rounded-[14px]
-            whitespace-nowrap
-            bg-gradient-to-br from-[#667eea] to-[#764ba2]
-            shadow-[0_4px_15px_rgba(102,126,234,0.35)]
-            hover:shadow-[0_8px_22px_rgba(102,126,234,0.45)]
-            active:scale-95 transition-all duration-300
-          "
-        >
-          <span className="hidden sm:inline">Start Tutorial</span>
-          <span className="inline sm:hidden">▶</span>
-        </motion.button>
+    flex items-center justify-center
+    min-w-[100px] sm:min-w-[120px] md:min-w-[130px]
+    h-9 sm:h-10 md:h-10
+    px-4 sm:px-5 md:px-6
+    flex-shrink-0
+    whitespace-nowrap
 
+    text-white font-semibold tracking-[0.3px]
+    text-[12px] sm:text-[13px] md:text-[14px]
+
+    rounded-xl sm:rounded-[14px]
+
+    bg-gradient-to-br from-[#667eea] to-[#764ba2]
+    shadow-[0_4px_15px_rgba(102,126,234,0.35)]
+    hover:shadow-[0_8px_22px_rgba(102,126,234,0.45)]
+    active:scale-95 transition-all duration-300
+  "
+        >
+          Start Tutorial
+        </motion.button>
         {/* ── Notification Bell ── */}
         <NotificationBell userId={userId} />
 

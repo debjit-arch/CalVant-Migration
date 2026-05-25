@@ -17,7 +17,7 @@ import {
   TableRow,
   Paper,
   Divider,
-} from "@mui/material";
+} from "@material-ui/core";
 import { captureActivity, ACTIONS, logSelect } from "../../services/activities";
 import {
   Close as CloseIcon,
@@ -27,7 +27,7 @@ import {
   Cancel as CancelIcon,
   Warning as WarningIcon,
   Functions as FunctionsIcon,
-} from "@mui/icons-material";
+} from "@material-ui/icons";
 
 const PAGE_SIZE = 10;
 

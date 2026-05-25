@@ -1,9 +1,9 @@
-// app/aiia/page.js
+"use client";
+
 import ProtectedPage from "@/components/ProtectedPage";
 import FrameworkPage from "@/components/FrameworkPage";
 import AiiaDashboard from "@/modules/aiia/pages/AiiaDashboard";
-
-export default function AiiaRoute() {
+export default function Page() {
   return (
     <ProtectedPage>
       <FrameworkPage moduleKey="aiia">

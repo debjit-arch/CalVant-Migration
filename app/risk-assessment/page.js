@@ -1,14 +1,17 @@
-// app/risk-assessment/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import RiskAssessment from "@/modules/riskAssesment/pages/RiskAssessment";
+"use client";
 
-export default function RiskAssessmentRoute() {
+import dynamic from "next/dynamic";
+import ProtectedPage from "@/components/ProtectedPage";
+
+const RiskAssessment = dynamic(
+  () => import("@/modules/riskAssesment/pages/RiskAssessment"),
+  { ssr: false }
+);
+
+export default function Page() {
   return (
     <ProtectedPage>
-      <FrameworkPage moduleKey="riskAssesment">
-        <RiskAssessment />
-      </FrameworkPage>
+      <RiskAssessment />
     </ProtectedPage>
   );
 }

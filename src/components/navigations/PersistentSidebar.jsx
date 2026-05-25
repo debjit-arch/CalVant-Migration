@@ -26,6 +26,7 @@ import {
 } from "../../context/LayoutContext";
 import DualLogo from "../DualLogo";
 import { useSession } from "../../context/SessionContext";
+import { useFramework } from "../../context/FrameworkContex";
 
 /* ─────────────────────────────────────────────
    Custom hook for media query
@@ -130,6 +131,7 @@ const NAV_ITEMS = [
     //   { label: "   Reports", path: "/compliances/reports" },
     // ],
     expandable: true,
+    moduleKey: "dpia",
   },
   {
     icon: Brain,
@@ -140,6 +142,7 @@ const NAV_ITEMS = [
     //   { label: "   Reports", path: "/compliances/reports" },
     // ],
     expandable: true,
+    moduleKey: "aiia",
   },
   // {
   //   path: "/trust-centre",
@@ -160,23 +163,28 @@ const PersistentSidebar = () => {
     collapseSidebar,
     setMobileView,
   } = useLayout();
+  const { showDpia, showAiia } = useFramework();
   const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const router = useRouter();
   const pathname = usePathname();
   const [expandedModules, setExpandedModules] = useState([]);
   // Mobile detection using media query
   const isMobileScreen = useMediaQuery("(max-width: 1023px)");
 
-const { isAuthenticated } = useSession(); // add this import too
-const [user, setUser] = useState(null);
-useEffect(() => {
-  if (isAuthenticated) {
-    const rawUser = sessionStorage.getItem("user");
-    if (rawUser) setUser(JSON.parse(rawUser));
-  } else {
-    setUser(null); // clear on logout
-  }
-}, [isAuthenticated]);
+  const { isAuthenticated } = useSession(); // add this import too
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    if (isAuthenticated) {
+      const rawUser = sessionStorage.getItem("user");
+      if (rawUser) setUser(JSON.parse(rawUser));
+    } else {
+      setUser(null); // clear on logout
+    }
+  }, [isAuthenticated]);
   const isHomePage = pathname === "/";
 
   // Handle responsive behavior
@@ -213,12 +221,8 @@ useEffect(() => {
     );
   };
 
-  // Determine if sidebar should be expanded
-  // On mobile, use sidebarExpanded directly (no hover)
-  // On desktop, use sidebarExpanded || isHovered
-  const isExpanded = isMobileScreen
-    ? sidebarExpanded
-    : sidebarExpanded || isHovered;
+  // Determine if sidebar should be expanded strictly by click-toggle (maintains single size without hover expansion jumps)
+  const isExpanded = sidebarExpanded;
 
   return (
     <>
@@ -291,7 +295,7 @@ useEffect(() => {
       <nav
         aria-label="Main navigation"
         onMouseEnter={() =>
-          !sidebarExpanded && !isMobileScreen && setIsHovered(true)
+          mounted && !sidebarExpanded && !isMobileScreen && setIsHovered(true)
         }
         onMouseLeave={() => setIsHovered(false)}
         className={`
@@ -301,7 +305,7 @@ useEffect(() => {
           shadow-[4px_0_24px_rgba(0,0,0,0.08)]
           flex flex-col
           overflow-hidden
-          transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
+          ${mounted ? "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]" : ""}
           border-r border-gray-100
         `}
         style={{
@@ -321,7 +325,8 @@ useEffect(() => {
             flex items-center
             px-3 sm:px-4 md:px-5
             py-3 sm:py-4
-            bg-gradient-to-r from-[#667eea] to-[#764ba2]
+                 border-b border-gray-100
+
             flex-shrink-0
           "
         >
@@ -333,7 +338,11 @@ useEffect(() => {
 
         {/* Nav items */}
         <div className="flex flex-col flex-1 pt-3 sm:pt-3 pb-3 overflow-y-auto overflow-x-hidden">
-          {NAV_ITEMS.map(
+          {NAV_ITEMS.filter((item) => {
+            if (item.moduleKey === "dpia" && !showDpia) return false;
+            if (item.moduleKey === "aiia" && !showAiia) return false;
+            return true;
+          }).map(
             ({ icon: Icon, label, path, expandable, quickActions }) => {
               const isActive =
                 pathname === path ||

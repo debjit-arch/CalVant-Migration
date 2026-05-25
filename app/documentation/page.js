@@ -1,14 +1,17 @@
-// app/documentation/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import Documentation from "@/modules/documentation/pages/Documentation";
+"use client";
 
-export default function DocumentationRoute() {
+import dynamic from "next/dynamic";
+import ProtectedPage from "@/components/ProtectedPage";
+
+const Documentation = dynamic(
+  () => import("@/modules/documentation/pages/Documentation"),
+  { ssr: false }
+);
+
+export default function Page() {
   return (
     <ProtectedPage>
-      <FrameworkPage moduleKey="documentation">
-        <Documentation />
-      </FrameworkPage>
+      <Documentation />
     </ProtectedPage>
   );
 }

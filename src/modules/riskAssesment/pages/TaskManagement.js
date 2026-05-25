@@ -1,4 +1,4 @@
-"use client";
+//C:\Users\ak192\Downloads\CV_Beta_v1.0.0-Calvant_migration\CV_Beta_v1.0.0-Calvant_migration\src\modules\riskAssesment\pages\TaskManagement.js
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -13,9 +13,12 @@ import {
 } from "../../departments/services/userService";
 
 export default function RiskTaskManagement({ riskFormData = {} }) {
-  const history  = useHistory();
+  const router   = useRouter();
   const pathname = usePathname();
-  const rawUser  = sessionStorage.getItem("user");
+  const rawUser  =
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("user")
+      : null;
   const user     = rawUser ? JSON.parse(rawUser) : null;
   const today    = new Date().toISOString().split("T")[0];
 

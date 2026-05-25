@@ -1,12 +1,11 @@
-// app/reports/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import ReportsDashboard from "@/modules/reports/pages/ReportsDashboard";
+"use client";
 
-export default function ReportsRoute() {
+import ProtectedPage from "@/components/ProtectedPage";
+import ReportsDashboard from "@/modules/reports/pages/ReportsDashboard";
+export default function Page() {
   return (
     <ProtectedPage>
-        <ReportsDashboard />
+      <ReportsDashboard />
     </ProtectedPage>
   );
 }

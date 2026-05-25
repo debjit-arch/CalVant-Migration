@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ChevronDown, RefreshCw, Save, AlertCircle, Edit, Trash2, X, Plus, Search } from 'lucide-react';
@@ -434,9 +433,18 @@ function ManageAiiaModal({ onClose, onSaved }) {
                         <span className="manage-meta-dot">·</span>
                         <span>👤 {assessment.aiSystemOwner}</span>
                         <span className="manage-meta-dot">·</span>
-                        <span>📅 {assessment.dateOfAssessment
-                          ? new Date(assessment.dateOfAssessment).toLocaleDateString()
-                          : '—'}</span>
+                       <span>
+  📅 {assessment.dateOfAssessment
+    ? (() => {
+        const date = new Date(assessment.dateOfAssessment);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+      })()
+    : '—'}
+</span>
                       </div>
                     </div>
                     <div className="manage-item-right">

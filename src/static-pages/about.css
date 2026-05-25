@@ -181,6 +181,11 @@ body {
   animation: fadeInLeft 0.6s ease 0.1s backwards;
 }
 
+.about-logo-section img {
+  height: 42px !important;
+  width: auto !important;
+}
+
 .about-logo-icon {
   width: 44px;
   height: 44px;

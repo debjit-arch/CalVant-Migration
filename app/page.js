@@ -1,15 +1,16 @@
-"use client";
-import React from "react";
-import { useSession } from "@/context/SessionContext";
-import Dashboard from "@/modules/dashboard/Dashboard";
-import DashboardLoggedIn from "@/modules/dashboard/DashboardLoggedIn";
+import { getPageMetadata } from '@/utils/getPageMetadata';
+import HomePageClient from '@/components/HomePageClient';
 
-export default function HomePage() {
-  const { isAuthenticated } = useSession();
+export async function generateMetadata() {
+  const meta = await getPageMetadata('/', {
+    title: 'CalVant | ISO Compliance & Risk Management Platform',
+    description: 'Empower your organization with CalVant compliance platform.',
+  });
 
-  if (isAuthenticated === null) return null; // still checking, prevent flash
+  console.log('[generateMetadata] resolved:', JSON.stringify(meta, null, 2));
+  return meta;
+}
 
-  if (!isAuthenticated) return <Dashboard />;
-
-  return <DashboardLoggedIn />;
+export default function Page() {
+  return <HomePageClient />;
 }

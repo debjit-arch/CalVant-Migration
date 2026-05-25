@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Joyride from "react-joyride";
@@ -15,9 +14,11 @@ import {
   Users,
   Brain,
   ShieldCheck, // ✅ Added for KSA PDPL
+  RefreshCw,
 } from "lucide-react";
 import { PieChart, Pie, ResponsiveContainer, Tooltip, Cell } from "recharts";
 import { motion } from "framer-motion";
+import { NetworkLockedSharp } from "@material-ui/icons";
 import { useFramework } from "../../context/FrameworkContex";
 import {
   getFrameworkCompliance,
@@ -152,6 +153,16 @@ const Compliances = () => {
   const [run, setRun] = useState(false);
   const [tenantReady, setTenantReady] = useState(false);
 
+  const userRoles = Array.isArray(user?.role) ? user.role : [user?.role || ""];
+  const isRoot = userRoles.includes("root");
+
+  const handleRefresh = useCallback(() => {
+    if (!availableFrameworks || availableFrameworks.length === 0) return;
+    availableFrameworks.forEach((fw) => {
+      loadFramework(fw.code);
+    });
+  }, [availableFrameworks, loadFramework]);
+
 
   const emptyStats = {
     totalControls: 0,
@@ -200,9 +211,7 @@ const Compliances = () => {
     const init = async () => {
       try {
         const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
-        console.log("Compliances.js - userData:", userData);
         const orgId = userData.organization?._id ?? userData.organization;
-        console.log("Compliances.js - orgId:", orgId);
         if (!orgId) {
           setTenantReady(true);
           return;
@@ -222,7 +231,7 @@ const Compliances = () => {
         const cached = localStorage.getItem("risk_assessment_cache_v1");
         if (!cached) {
           const requirementsRes = await axios.get(
-            `https://api.calvant.com/compliance-brain/compliance/controls?tenantId=${tenantId}`,
+            `https://api.calvant.com/compliance-brain/compliance/requirements?tenantId=${tenantId}`,
             {
               headers: {
                 Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -383,20 +392,40 @@ const Compliances = () => {
               </p>
             </div>
           </div>
-          <button
-            className="flex items-center gap-2 text-sm bg-blue-600 text-white px-4 py-2 rounded-lg"
-            onClick={() => {
-              setRun(false);
-              setTimeout(() => setRun(true), 200);
-              logClick(
-                "Compliance · Start Tutorial",
-                {},
-                window.pathname,
-              );
-            }}
-          >
-            <HelpCircle size={16} /> Tutorial
-          </button>
+          <div className="flex items-center gap-3">
+            <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${isRoot ? "bg-blue-100 text-blue-700" : "bg-violet-100 text-violet-700"}`}>
+              {isRoot ? "Root" : (userRoles[0] ? userRoles[0].replace("_", " ") : "User")}
+            </span>
+            <span className="text-sm font-semibold text-slate-600">
+              {user?.name || "User"}
+            </span>
+            <motion.button
+              onClick={handleRefresh}
+              title="Refresh"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200 flex items-center justify-center"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <RefreshCw size={15} className="text-slate-500" />
+            </motion.button>
+            <motion.button
+              className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
+              onClick={() => {
+                setRun(false);
+                setTimeout(() => setRun(true), 200);
+                logClick(
+                  "Compliance · Start Tutorial",
+                  {},
+                  window.pathname,
+                );
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <HelpCircle size={18} />
+              <span>Tutorial</span>
+            </motion.button>
+          </div>
         </motion.header>
 
         {/* Stat cards */}
@@ -519,7 +548,7 @@ const Compliances = () => {
         <div>
           <button
             className="bg-blue-600 text-white px-5 py-2 rounded-lg flex items-center gap-2"
-            onClick={() => router.push("/integrations")}
+            onClick={() => router.push("/compliances/detailed")}
           >
             <Eye size={16} /> Detailed View
           </button>

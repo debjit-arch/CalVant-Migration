@@ -1,9 +1,9 @@
-"use client";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import documentationService from "../services/documentationService";
 import controlService from "../services/controlService";
 import { useFramework, ALL_FRAMEWORKS } from "../../../context/FrameworkContex";
+import { useLayout } from "../../../context/LayoutContext";
 import Joyride from "react-joyride";
 import CompactFrameworkFilter from "./CompactFrameworkFilter";
 import { captureActivity, ACTIONS } from "../../../services/activities";
@@ -16,6 +16,7 @@ import {
   HelpCircle,
   FolderOpen,
   Archive,
+  RefreshCw,
 } from "lucide-react";
 import {
   PieChart,
@@ -38,6 +39,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const Documentation = () => {
   const router = useRouter();
   const chartsContainerRef = useRef(null);
+  const { collapseSidebar } = useLayout();
 
   const [user] = useState(() => JSON.parse(sessionStorage.getItem("user")));
   const userRoles = Array.isArray(user?.role) ? user.role : [user?.role || ""];
@@ -112,8 +114,14 @@ const Documentation = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) router.push("/");
+    if (!user) {
+      router.push("/");
+    }
   }, [user, router]);
+
+  useEffect(() => {
+    collapseSidebar();
+  }, [collapseSidebar]);
 
   // ── Count total required docs from backend controls ───────────────────────
   const getTotalFromBackendControls = (controls, currentUser, userIsAdmin) => {
@@ -412,17 +420,30 @@ const Documentation = () => {
         {/* Header */}
         <motion.header
           id="dashboard-header"
-          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-6 p-6"
+          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-2 p-6 !text-left"
+          style={{
+            textAlign: "left",
+            width: "100%",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+          }}
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-            <div className="flex items-center gap-4 flex-1">
+          <div className="flex items-center justify-between w-full">
+            <div
+              className="flex items-center gap-4 flex-1"
+              style={{
+                justifyContent: "flex-start",
+                textAlign: "left",
+                alignItems: "flex-start",
+              }}
+            >
               <div className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                 <FileText className="w-7 h-7 text-white drop-shadow-sm" />
               </div>
-              <div>
+              <div style={{ textAlign: "left" }}>
                 <h1 className="text-2xl font-semibold text-slate-800 leading-tight">
                   Policies Dashboard
                 </h1>
@@ -435,24 +456,41 @@ const Documentation = () => {
                 </p>
               </div>
             </div>
-            <motion.button
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
-              onClick={() => {
-                setRun(false);
-                setTimeout(() => setRun(true), 100);
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <HelpCircle size={18} />
-              <span>Tutorial</span>
-            </motion.button>
+            <div className="flex items-center gap-3">
+              <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${isRoot ? "bg-blue-100 text-blue-700" : "bg-violet-100 text-violet-700"}`}>
+                {isRoot ? "Root" : (userRoles[0] ? userRoles[0].replace("_", " ") : "User")}
+              </span>
+              <span className="text-sm font-semibold text-slate-600">
+                {user?.name || "User"}
+              </span>
+              <motion.button
+                onClick={loadDocumentStats}
+                title="Refresh"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200 flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <RefreshCw size={15} className="text-slate-500" />
+              </motion.button>
+              <motion.button
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
+                onClick={() => {
+                  setRun(false);
+                  setTimeout(() => setRun(true), 100);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <HelpCircle size={18} />
+                <span>Tutorial</span>
+              </motion.button>
+            </div>
           </div>
         </motion.header>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 h-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 w-full min-w-0">
           {/* LEFT */}
-          <div className="space-y-10">
+          <div className="space-y-10 w-full min-w-0">
             {/* Stats Grid */}
             <motion.section
               id="stats-grid"
@@ -496,8 +534,11 @@ const Documentation = () => {
                 },
               ].map(
                 ({ Icon: IconComponent, value, label, color, id, path }, i) => (
-                  <motion.div className="group bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-lg px-3 py-4 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex items-center gap-2 h-20 hover:bg-white">
-                    {/* Icon */}
+                  <motion.div
+                    key={id}
+                    className="group bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-lg px-3 py-4 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex items-center gap-2 h-20 hover:bg-white"
+                    onClick={() => router.push(path)}
+                  >
                     <div
                       className={`w-10 h-10 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center shadow-md flex-shrink-0`}
                     >
@@ -507,7 +548,6 @@ const Documentation = () => {
                       />
                     </div>
 
-                    {/* Text */}
                     <div className="flex-1">
                       <span className="text-2xl font-semibold text-slate-800 block leading-tight">
                         {value}
@@ -525,7 +565,7 @@ const Documentation = () => {
             <motion.section
               id="action-cards"
               className="space-y-1"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
@@ -611,11 +651,11 @@ const Documentation = () => {
           <div
             ref={chartsContainerRef}
             id="charts-container"
-            className="space-y-3"
+            className="space-y-1 w-full min-w-0"
           >
             {/* Pie Chart */}
             <motion.div
-              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-400 h-80 flex flex-col"
+              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-3 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-400 h-64 flex flex-col w-full min-w-0"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.01 }}
@@ -623,9 +663,9 @@ const Documentation = () => {
               <h3 className="text-lg font-semibold text-slate-800 mb-6">
                 Document Status
               </h3>
-              <div className="flex-1 flex items-center justify-center min-h-0">
+              <div className="h-40 flex items-center justify-center w-full min-w-0">
                 {documentStats.total > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" debounce={50}>
                     <PieChart>
                       <Pie
                         data={pieData}
@@ -633,8 +673,8 @@ const Documentation = () => {
                         nameKey="name"
                         cx="50%"
                         cy="50%"
-                        innerRadius={40}
-                        outerRadius={75}
+                        innerRadius={35}
+                        outerRadius={65}
                         paddingAngle={2}
                         stroke="white"
                         strokeWidth={3}
@@ -684,7 +724,7 @@ const Documentation = () => {
 
             {/* Bar Chart */}
             <motion.div
-              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-72"
+              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-72 w-full min-w-0"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -702,7 +742,7 @@ const Documentation = () => {
                 </p>
               </div>
               {barData.some((d) => d.value > 0) ? (
-                <ResponsiveContainer width="100%" height="85%">
+                <ResponsiveContainer width="100%" height="75%" debounce={50}>
                   <BarChart
                     data={barData}
                     margin={{ top: 10, right: 10, left: 0, bottom: 5 }}

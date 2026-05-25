@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import gapService from "../services/gapService";
 import { useRouter } from "next/navigation";

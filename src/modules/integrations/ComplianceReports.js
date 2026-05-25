@@ -6,7 +6,7 @@ import {
   Box,
   Container,
   CircularProgress,
-} from "@mui/material";
+} from "@material-ui/core";
 import {
   LineChart,
   Line,
@@ -39,7 +39,6 @@ const ComplianceReports = () => {
           { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } },
         );
         const tenantId = tenantRes.data;
-        console.log(tenantId);
 
         // ── Fetch history scoped to this tenant ────────────────────────────
         const historyRes = await axios.get(
@@ -48,7 +47,7 @@ const ComplianceReports = () => {
         );
         setHistory(historyRes.data);
       } catch (err) {
-        setError(err.response?.data?.message || err.message || "Failed to load compliance router.");
+        setError(err.response?.data?.message || err.message || "Failed to load compliance data.");
       } finally {
         setLoading(false);
       }
@@ -61,7 +60,7 @@ const ComplianceReports = () => {
   const chartData = useMemo(() => {
     const map = {};
 
-    router.forEach((item) => {
+    history.forEach((item) => {
       const date = new Date(item.syncedAt);
       const month = date.toLocaleString("default", { month: "short" });
 
@@ -92,8 +91,8 @@ const ComplianceReports = () => {
 
     return Object.values(map).map((m) => ({
       month: m.month,
-      AWS:  m.awsCount  ? Math.round(m.AWS  / m.awsCount)  : 0,
-      GCP:  m.gcpCount  ? Math.round(m.GCP  / m.gcpCount)  : 0,
+      AWS: m.awsCount ? Math.round(m.AWS / m.awsCount) : 0,
+      GCP: m.gcpCount ? Math.round(m.GCP / m.gcpCount) : 0,
       M365: m.m365Count ? Math.round(m.M365 / m.m365Count) : 0,
     }));
   }, [history]);
@@ -109,7 +108,7 @@ const ComplianceReports = () => {
         {loading ? (
           <Box display="flex" justifyContent="center" alignItems="center" height={400} style={{ gap: 16, flexDirection: "column" }}>
             <CircularProgress size={48} thickness={4} />
-            <Typography style={{ color: "#64748b", fontSize: 15 }}>Loading compliance router...</Typography>
+            <Typography style={{ color: "#64748b", fontSize: 15 }}>Loading compliance data...</Typography>
           </Box>
         ) : error ? (
           <Box display="flex" justifyContent="center" alignItems="center" height={400}>
@@ -128,8 +127,8 @@ const ComplianceReports = () => {
                 <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                 <Tooltip formatter={(value) => `${value}%`} />
                 <Legend />
-                <Line type="monotone" dataKey="AWS"  stroke="#FF9900" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
-                <Line type="monotone" dataKey="GCP"  stroke="#4285F4" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
+                <Line type="monotone" dataKey="AWS" stroke="#FF9900" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
+                <Line type="monotone" dataKey="GCP" stroke="#4285F4" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
                 <Line type="monotone" dataKey="M365" stroke="#00A4EF" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
               </LineChart>
             </ResponsiveContainer>

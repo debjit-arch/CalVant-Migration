@@ -1,5 +1,6 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Save, X } from 'lucide-react';
 import { risksApi } from '../services/aiiaApi';
 

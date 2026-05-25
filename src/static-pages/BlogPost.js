@@ -34,7 +34,8 @@ const ImageWithFallback = ({ src, alt, className }) => {
   );
 };
 
-const BlogPost = ({ slug }) => {
+const BlogPost = ({ slug: propSlug, match }) => {
+  const slug = propSlug || match?.params?.slug;
   const router = useRouter();
   const [post, setPost] = useState(null);
   const [allPosts, setAllPosts] = useState([]);

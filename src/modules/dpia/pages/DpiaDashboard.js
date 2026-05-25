@@ -1,4 +1,5 @@
-"use client"
+//C:\Users\ak192\Downloads\CV_Beta_v1.0.0-Calvant_migration-2\CV_Beta_v1.0.0-Calvant_migration-2\src\modules\dpia\pages\DpiaDashboard.js
+
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "../../../hooks/useUser";
@@ -17,6 +18,7 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+import Joyride, { STATUS } from "react-joyride";
 import {
   ShieldCheck,
   ClipboardList,
@@ -31,6 +33,7 @@ import {
   UserCheck,
   Layers,
   Search,
+  HelpCircle,
 } from "lucide-react";
 
 // ── Modal imports ─────────────────────────────────────────────────────────────
@@ -124,14 +127,50 @@ export default function Dashboard() {
   const organizationId = user?.organization;
   const router = useRouter();
   const chartsContainerRef = useRef(null);
+  const pageLoggedRef = useRef(false);
   const [departments, setDepartments] = useState([]);
-  // ── Role detection (mirrors AuditDashboard pattern) ──────────────────────
+
+  // ── Auth loading guard ────────────────────────────────────────────────────
+  // useUser() returns null on the very first render (before its internal
+  // effect/context has resolved), which is identical to "not logged in".
+  // We track whether the hook has settled so we can distinguish:
+  //   isUserLoaded === false → still resolving, do NOT redirect yet
+  //   isUserLoaded === true  → settled; user is the real value (object or null)
+  //
+  // Strategy: watch the `user` value across renders. The moment it transitions
+  // from null to something (or we know it has had time to settle), mark loaded.
+  // We use a small timeout as a fallback so we don't hang forever if the hook
+  // never resolves to a truthy value (i.e. the user is genuinely not logged in).
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
+
+  useEffect(() => {
+    if (user !== null && user !== undefined) {
+      // Hook returned a real user — settle immediately
+      setIsUserLoaded(true);
+      return;
+    }
+
+    // user is null/undefined: give the hook one tick to resolve before we
+    // consider it "settled as unauthenticated". A single rAF is enough for
+    // hooks backed by context/sessionStorage to complete their effect.
+    // We use a short timeout (0 ms via rAF) so we don't flash a redirect.
+    const id = requestAnimationFrame(() => {
+      setIsUserLoaded(true);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [user]);
+
+  // ── Auth state is used for data fetching gate ──────────────────────────
+  // We no longer perform manual redirects here because this component
+  // is wrapped in ProtectedPage at the route level.
+  // We just wait for user to be available before fetching data.
+
+  // ── Role detection ────────────────────────────────────────────────────────
   const userRoles = Array.isArray(user?.role) ? user.role : [user?.role || ""];
   const isRoot = user?.role?.some((r) => {
     const s = (typeof r === "string" ? r : r?.name || r?.roleName || "")
       .toLowerCase()
       .replace(/[\s_-]/g, "");
-
     return ["root", "dpo"].some((role) => s.includes(role));
   });
   const isRiskOwner =
@@ -143,8 +182,26 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [modal, setModal] = useState(null);
   const [riskOwners, setRiskOwners] = useState([]);
+  const [run, setRun] = useState(false);
+  const steps = [
+    {
+      target: "#dashboard-header",
+      content: "Welcome to your DPIA dashboard. Manage data protection impact assessments efficiently.",
+    },
+    {
+      target: "#stats-grid",
+      content: "A quick summary of assessments categorized by status.",
+    },
+    {
+      target: "#action-cards",
+      content: "Plan new assessments, manage assignments, or review submitted audits.",
+    },
+    {
+      target: "#charts-container",
+      content: "Visual status metrics and monthly DPIA trends.",
+    },
+  ];
 
-  // Add inside the existing getAllUsers useEffect
   useEffect(() => {
     if (!organizationId) return;
 
@@ -172,44 +229,61 @@ export default function Dashboard() {
   }, [organizationId]);
 
   const loadData = useCallback(() => {
+    if (!organizationId) return;
+
+    setError(null);
     setLoadingStats(true);
     setLoading(true);
+
     getAllAssessments(organizationId)
       .then((data) => {
         setDpias(Array.isArray(data) ? data : []);
-        setLoadingStats(false);
-        setLoading(false);
       })
       .catch((err) => {
         setError(
           err?.response?.data?.message || err?.message || "Failed to load",
         );
+      })
+      .finally(() => {
         setLoadingStats(false);
         setLoading(false);
       });
   }, [organizationId]);
 
+  // Load data only after the user is confirmed present to avoid unauthenticated requests
   useEffect(() => {
-    loadData();
-    captureActivity({
-      action: ACTIONS.PAGE_LOAD,
-      item: "DPIA Dashboard",
-      url: window.location.pathname,
-    });
-  }, [loadData]);
+    if (!isUserLoaded || !user?.id || !organizationId) return;
 
+    // Load dashboard data
+    loadData();
+
+    // Log page load only once
+    if (!pageLoggedRef.current) {
+      pageLoggedRef.current = true;
+
+      captureActivity({
+        action: ACTIONS.PAGE_LOAD,
+        item: "DPIA Dashboard",
+        url: window.location.pathname,
+      });
+    }
+  }, [isUserLoaded, user?.id, organizationId, loadData]);
   // Fix recharts in flex containers
   useEffect(() => {
+    const roTimer = { current: null };
     const ro = new ResizeObserver(() => {
-      clearTimeout(window._dpiaRO);
-      window._dpiaRO = setTimeout(
+      clearTimeout(roTimer.current);
+      roTimer.current = setTimeout(
         () => window.dispatchEvent(new Event("resize")),
         150,
       );
     });
-    if (chartsContainerRef.current) ro.observe(chartsContainerRef.current);
+    const el = chartsContainerRef.current;
+    if (el) ro.observe(el);
     return () => {
-      if (chartsContainerRef.current) ro.unobserve(chartsContainerRef.current);
+      clearTimeout(roTimer.current);
+      if (el) ro.unobserve(el);
+      ro.disconnect();
     };
   }, []);
 
@@ -290,12 +364,7 @@ export default function Dashboard() {
     },
   ];
 
-  // ── Quick actions — role-based ────────────────────────────────────────────
-  //
-  // Root   → New Assessment · View Assessments · Assign DPIA · Manage Assignments
-  // Risk Owner → View My DPIAs · Review Findings
-  // Default (no special role) → New Assessment · View Assessments · Compliance · Reports
-  //
+  // ── Quick actions ─────────────────────────────────────────────────────────
   const rootActions = [
     {
       key: "view",
@@ -304,7 +373,11 @@ export default function Dashboard() {
       subtitle: "Browse all assessments",
       color: "from-emerald-400 to-emerald-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: View DPIAs", url: window.location.pathname });
+        captureActivity({
+          action: ACTIONS.CLICK,
+          item: "DPIA · Opened: View DPIAs",
+          url: window.pathname,
+        });
         router.push("/dpia/assessments");
       },
     },
@@ -315,7 +388,11 @@ export default function Dashboard() {
       subtitle: "Assign to a risk owner",
       color: "from-violet-400 to-violet-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Plan DPIA Modal", url: window.location.pathname });
+        captureActivity({
+          action: ACTIONS.CLICK,
+          item: "DPIA · Opened: Plan DPIA Modal",
+          url: window.pathname,
+        });
         setModal("assign");
       },
     },
@@ -326,7 +403,11 @@ export default function Dashboard() {
       subtitle: "View & edit assignments",
       color: "from-purple-400 to-purple-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Manage DPIA Modal", url: window.location.pathname });
+        captureActivity({
+          action: ACTIONS.CLICK,
+          item: "DPIA · Opened: Manage DPIA Modal",
+          url: window.pathname,
+        });
         setModal("manage");
       },
     },
@@ -340,7 +421,11 @@ export default function Dashboard() {
       subtitle: "View your assigned assessments",
       color: "from-violet-400 to-violet-600",
       onClick: () => {
-        captureActivity({ action: ACTIONS.CLICK, item: "DPIA · Opened: Conduct DPIA Modal", url: window.location.pathname });
+        captureActivity({
+          action: ACTIONS.CLICK,
+          item: "DPIA · Opened: Conduct DPIA Modal",
+          url: window.pathname,
+        });
         setModal("myDpias");
       },
     },
@@ -402,6 +487,20 @@ export default function Dashboard() {
       ? { label: "Risk Owner", style: "bg-violet-100 text-violet-700" }
       : null;
 
+  // ── Loading gate ──────────────────────────────────────────────────────────
+  // Show spinner while the useUser hook is resolving on hard reload.
+  // This prevents the redirect from firing before the hook has settled.
+  if (!isUserLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-slate-500 text-sm">Loading dashboard...</div>
+      </div>
+    );
+  }
+
+  // Confirmed unauthenticated — render nothing while redirect is in-flight
+  if (!user) return null;
+
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 flex flex-col overflow-hidden"
@@ -409,35 +508,50 @@ export default function Dashboard() {
     >
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
+      <Joyride
+        steps={steps}
+        run={run}
+        continuous
+        showSkipButton
+        scrollToFirstStep
+        styles={{ options: { primaryColor: "#3b82f6", width: 300 } }}
+        callback={(data) => {
+          if ([STATUS.FINISHED, STATUS.SKIPPED].includes(data.status))
+            setRun(false);
+        }}
+      />
+
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-28">
         {/* ── HEADER ── */}
         <motion.header
-          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-6 p-6"
+          id="dashboard-header"
+          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-6 p-6 !text-left"
+          style={{
+            textAlign: "left",
+            width: "100%",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+          }}
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-            <div className="flex items-center gap-4 flex-1">
+          <div className="flex items-center justify-between w-full">
+            <div
+              className="flex items-center gap-4 flex-1"
+              style={{
+                justifyContent: "flex-start",
+                textAlign: "left",
+                alignItems: "flex-start",
+              }}
+            >
               <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
                 <ShieldCheck className="w-7 h-7 text-white drop-shadow-sm" />
               </div>
-              <div>
+              <div style={{ textAlign: "left" }}>
                 <h1 className="text-2xl font-semibold text-slate-800 leading-tight">
                   DPIA Dashboard
                 </h1>
-                {/* <p className="text-base text-slate-600 mt-1">
-                  {isRoot
-                    ? "Root Dashboard"
-                    : isRiskOwner
-                      ? "Risk Owner Dashboard"
-                      : "Data Protection Impact Assessment"}
-                  {" · "}
-                  <span className="font-bold text-2xl text-slate-900">
-                    {total}
-                  </span>{" "}
-                  total assessments
-                </p> */}
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -454,7 +568,7 @@ export default function Dashboard() {
               <motion.button
                 onClick={loadData}
                 title="Refresh"
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200 flex items-center justify-center"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -465,6 +579,18 @@ export default function Dashboard() {
                     loading ? { animation: "spin 1s linear infinite" } : {}
                   }
                 />
+              </motion.button>
+              <motion.button
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
+                onClick={() => {
+                  setRun(false);
+                  setTimeout(() => setRun(true), 100);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <HelpCircle size={18} />
+                <span>Guide</span>
               </motion.button>
             </div>
           </div>
@@ -478,10 +604,11 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* ── LEFT COLUMN ── */}
-          <div className="space-y-8">
+          <div className="space-y-3">
             {/* Stat Cards — root / default only (risk owners see assignment summary) */}
             {!isRiskOwner && (
               <motion.section
+                id="stats-grid"
                 className="grid grid-cols-2 sm:grid-cols-3 gap-4"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -520,6 +647,7 @@ export default function Dashboard() {
             {/* Risk owner — assigned summary card */}
             {isRiskOwner && (
               <motion.div
+                id="stats-grid"
                 className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-xl p-5 shadow-sm"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -543,6 +671,7 @@ export default function Dashboard() {
 
             {/* Quick Actions */}
             <motion.section
+              id="action-cards"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.25 }}
@@ -551,9 +680,8 @@ export default function Dashboard() {
                 Quick Actions
               </h3>
               <div
-                className={`grid gap-4 ${
-                  isRiskOwner ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2"
-                }`}
+                className={`grid gap-4 ${isRiskOwner ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2"
+                  }`}
               >
                 <AnimatePresence>
                   {quickActions.map((action, i) => {
@@ -591,10 +719,10 @@ export default function Dashboard() {
           </div>
 
           {/* ── RIGHT COLUMN: CHARTS ── */}
-          <div ref={chartsContainerRef} className="space-y-6">
+          <div id="charts-container" ref={chartsContainerRef} className="space-y">
             {/* Pie Chart */}
             <motion.div
-              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-72 flex flex-col"
+              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-64 flex flex-col"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -612,8 +740,8 @@ export default function Dashboard() {
                         dataKey="value"
                         cx="50%"
                         cy="50%"
-                        innerRadius={42}
-                        outerRadius={75}
+                        innerRadius={40}
+                        outerRadius={72}
                         paddingAngle={3}
                         stroke="white"
                         strokeWidth={3}

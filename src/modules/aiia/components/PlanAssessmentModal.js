@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ChevronDown, RefreshCw, Save, AlertCircle } from "lucide-react";

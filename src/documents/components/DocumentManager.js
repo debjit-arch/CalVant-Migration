@@ -1,3 +1,4 @@
+import Link from 'next/link';
 // import React, { useState, useMemo } from "react";
 // import FolderCard from "./FolderCard";
 // import SearchBar from "./SearchBar";

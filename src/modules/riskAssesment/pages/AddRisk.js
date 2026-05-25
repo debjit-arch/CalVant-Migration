@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import MultiStepFormManager from "../components/forms/MultiStepFormManager";
@@ -71,7 +69,7 @@ const addRiskStyles = `
 const AddRisk = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const focusArea = location.state?.focusArea || "risk";
+  const focusArea = "risk";
 
   const [showButtons, setShowButtons] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -90,9 +88,8 @@ const AddRisk = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const handleSubmit = (formData) => {
-    console.log("Risk Assessment Data:", formData);
-    // submission logic...
+  const handleSubmit = () => {
+    // submission happens inside MultiStepFormManager
   };
 
   return (
@@ -115,3 +112,4 @@ const AddRisk = () => {
 };
 
 export default AddRisk;
+

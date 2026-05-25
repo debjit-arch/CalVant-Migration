@@ -1,4 +1,3 @@
-"use client";
 import React, {
   useState,
   useEffect,
@@ -22,6 +21,7 @@ import {
   Award,
   HelpCircle,
   PieChartIcon,
+  RefreshCw,
 } from "lucide-react";
 import {
   PieChart,
@@ -61,13 +61,13 @@ const TaskManagementDashboard = () => {
     const depts = user?.departments || [];
     const names = depts.map((d) => d.name.trim().toLowerCase());
 
-const isRoot = user?.role?.some((r) => {
-  const s = (typeof r === "string" ? r : r?.name || r?.roleName || "")
-    .toLowerCase()
-    .replace(/[\s_-]/g, "");
+    const isRoot = user?.role?.some((r) => {
+      const s = (typeof r === "string" ? r : r?.name || r?.roleName || "")
+        .toLowerCase()
+        .replace(/[\s_-]/g, "");
 
-  return ["root", "ciso", "aio", "dpo"].some(role => s.includes(role));
-});
+      return ["root", "ciso", "aio", "dpo"].some((role) => s.includes(role));
+    });
     const isSuperAdmin = roles.includes("super_admin");
 
     return {
@@ -76,8 +76,8 @@ const isRoot = user?.role?.some((r) => {
       departmentLabel: isRoot
         ? "All"
         : depts.map((d) => d.name).join(", ") ||
-          user?.department?.name ||
-          "General",
+        user?.department?.name ||
+        "General",
     };
   }, [user]);
 
@@ -390,7 +390,7 @@ const isRoot = user?.role?.some((r) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 flex flex-col overflow-hidden">
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-2 lg:py-8 pb-24 lg:pb-28 overflow-hidden">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-2 lg:py-6 pb-20 lg:pb-26 overflow-hidden">
         <Joyride
           steps={steps}
           run={run}
@@ -407,41 +407,65 @@ const isRoot = user?.role?.some((r) => {
         {/* Header */}
         <motion.header
           id="dashboard-header"
-          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-2 lg:mb-2 p-4 lg:p-5"
+          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-2 lg:mb-2 p-4 lg:p-5 !text-left"
+          style={{ textAlign: "left", width: "100%", justifyContent: "flex-start", alignItems: "flex-start", justifyItems: "flex-start" }}
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-6">
-            <div className="flex items-center gap-4 flex-1">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                <BarChart3 className="w-6 h-6 lg:w-7 lg:h-7 text-white drop-shadow-sm" />
+          <div className="flex items-center justify-between w-full">
+
+            {/* LEFT SIDE: ICON + TITLE */}
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                <BarChart3 className="w-6 h-6 text-white" />
               </div>
+
               <div>
-                <h1 className="text-xl lg:text-2xl font-semibold text-slate-800 leading-tight">
+                <h1 className="text-xl font-semibold text-slate-800">
                   Task Dashboard
                 </h1>
-                <p className="text-sm lg:text-base text-slate-600 mt-1">
+                <p className="text-sm text-slate-600">
                   {departmentLabel} •{" "}
-                  <span className="font-bold text-lg text-slate-900">
+                  <span className="font-bold text-slate-900">
                     {taskStats.total}
                   </span>{" "}
                   total tasks
                 </p>
               </div>
             </div>
-            <motion.button
-              className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
-              onClick={() => {
-                setRun(false);
-                setTimeout(() => setRun(true), 100);
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <HelpCircle size={18} />
-              <span>Guide</span>
-            </motion.button>
+
+            {/* RIGHT SIDE: BUTTONS */}
+            <div className="flex items-center gap-3">
+              <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${isAdmin ? "bg-blue-100 text-blue-700" : "bg-violet-100 text-violet-700"}`}>
+                {isAdmin ? "Admin" : "User"}
+              </span>
+              <span className="text-sm font-semibold text-slate-600">
+                {user?.name || "User"}
+              </span>
+              <motion.button
+                onClick={loadTaskStats}
+                title="Refresh"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200 flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <RefreshCw size={15} className="text-slate-500" />
+              </motion.button>
+              <motion.button
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
+                onClick={() => {
+                  setRun(false);
+                  setTimeout(() => setRun(true), 100);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <HelpCircle size={18} />
+                <span>Guide</span>
+              </motion.button>
+            </div>
+
           </div>
         </motion.header>
 

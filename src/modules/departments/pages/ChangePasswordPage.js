@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useLocation} from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { Lock, Loader2 } from "lucide-react";
 import Modal from "../../../components/navigations/Modal"; // <-- move to top

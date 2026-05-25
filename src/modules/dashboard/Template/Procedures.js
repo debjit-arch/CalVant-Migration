@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Target,
   TrendingUp,
@@ -39,6 +39,17 @@ const getStoredUser = () => {
 const storedUser = getStoredUser();
 
 const ProceduresPage = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleScrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -57,14 +68,34 @@ const ProceduresPage = () => {
       {/* HEADER & NAVBAR - EXACT ISO STYLE */}
       <header className="procedures-header">
         <div className="procedures-header-content">
-          <div className="procedures-logo-section">
-            {" "}
-            <img
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flex: "10px 0 auto",
+            }}
+          >
+            <Image
               src="/CalVant Logo.svg"
               alt="CalVant"
-              style={{ height: "210px", width: "auto", cursor: "pointer" }}
+              width={180}
+              height={60}
+              style={{
+                height: isMobile ? "30px" : "60px",
+                width: "auto",
+                transform: isMobile ? "scale(3.9)" : "scale(2.9)",
+                transformOrigin: "center",
+                cursor: "pointer",
+                transition: "transform 0.25s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(3.7)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(3.5)";
+              }}
               onClick={() => (window.location.href = "/")}
-            />{" "}
+            />
           </div>
 
           <nav className="procedures-header-nav">

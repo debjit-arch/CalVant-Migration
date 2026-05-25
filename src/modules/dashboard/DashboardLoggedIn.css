@@ -1,0 +1,350 @@
+/* ==========================================================================
+   DASHBOARD LAYOUT SYSTEM
+   ========================================================================== */
+
+/* Responsive Dashboard Grid Container */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Compliance Card Column Spanning */
+.compliance-span-2,
+.compliance-span-3,
+.compliance-span-4 {
+  grid-column: span 1;
+}
+
+@media (min-width: 640px) {
+  .compliance-span-2,
+  .compliance-span-3,
+  .compliance-span-4 {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .compliance-span-2 {
+    grid-column: span 2;
+  }
+  .compliance-span-3,
+  .compliance-span-4 {
+    grid-column: span 3;
+  }
+}
+
+@media (min-width: 1280px) {
+  .compliance-span-2 {
+    grid-column: span 2;
+  }
+  .compliance-span-3 {
+    grid-column: span 3;
+  }
+  .compliance-span-4 {
+    grid-column: span 4;
+  }
+}
+
+/* ==========================================================================
+   PREMIUM GLASSMORPHIC AND CARD STYLES
+   ========================================================================== */
+
+/* Glassmorphic Framework Card */
+.framework-glass-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 12px;
+  padding: 12px 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+}
+
+.framework-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.framework-glass-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 18px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  border-color: rgba(226, 232, 240, 1);
+}
+
+/* Dynamic Hover Glows mapped via style tags or variables */
+.framework-glass-card.iso27001-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(21, 101, 192, 0.12), 0 4px 6px -2px rgba(21, 101, 192, 0.08);
+  border-color: rgba(21, 101, 192, 0.3);
+}
+.framework-glass-card.iso27001-glow::before {
+  background: #1565c0;
+}
+
+.framework-glass-card.iso27701-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(106, 27, 154, 0.12), 0 4px 6px -2px rgba(106, 27, 154, 0.08);
+  border-color: rgba(106, 27, 154, 0.3);
+}
+.framework-glass-card.iso27701-glow::before {
+  background: #6a1b9a;
+}
+
+.framework-glass-card.soc2-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(27, 94, 32, 0.12), 0 4px 6px -2px rgba(27, 94, 32, 0.08);
+  border-color: rgba(27, 94, 32, 0.3);
+}
+.framework-glass-card.soc2-glow::before {
+  background: #1b5e20;
+}
+
+.framework-glass-card.iso42001-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(230, 81, 0, 0.12), 0 4px 6px -2px rgba(230, 81, 0, 0.08);
+  border-color: rgba(230, 81, 0, 0.3);
+}
+.framework-glass-card.iso42001-glow::before {
+  background: #e65100;
+}
+
+.framework-glass-card.ksapdpl-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(194, 65, 12, 0.12), 0 4px 6px -2px rgba(194, 65, 12, 0.08);
+  border-color: rgba(194, 65, 12, 0.3);
+}
+.framework-glass-card.ksapdpl-glow::before {
+  background: #c2410c;
+}
+
+.framework-glass-card.gdpr-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(16, 120, 185, 0.12), 0 4px 6px -2px rgba(16, 120, 185, 0.08);
+  border-color: rgba(16, 120, 185, 0.3);
+}
+.framework-glass-card.gdpr-glow::before {
+  background: #1078b9;
+}
+
+.framework-glass-card.dpdpa-glow:hover {
+  box-shadow: 0 10px 20px -3px rgba(255, 107, 53, 0.12), 0 4px 6px -2px rgba(255, 107, 53, 0.08);
+  border-color: rgba(255, 107, 53, 0.3);
+}
+.framework-glass-card.dpdpa-glow::before {
+  background: #ff6b35;
+}
+
+
+/* Premium Linear Progress Indicator */
+.sleek-progress-container {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sleek-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.sleek-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: progress-shimmer 2.2s infinite linear;
+}
+
+@keyframes progress-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ==========================================================================
+   SCROLLBAR STYLING
+   ========================================================================== */
+
+.custom-slim-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(203, 213, 225, 0.5) transparent;
+}
+
+.custom-slim-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-slim-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-slim-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(203, 213, 225, 0.5);
+  border-radius: 10px;
+  border: transparent;
+}
+
+.custom-slim-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.8);
+}
+
+/* ==========================================================================
+   MICRO-ANIMATIONS AND STATUS INDICATORS
+   ========================================================================== */
+
+/* Breathing status lights */
+.breathing-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.breathing-status-dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.4;
+  animation: breath 2s infinite ease-in-out;
+}
+
+@keyframes breath {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* Rotating subtle dashboard icons */
+.rotate-icon-hover:hover .rotate-icon {
+  transform: rotate(15deg) scale(1.05);
+}
+
+.rotate-icon {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   SPACE-OPTIMIZED SEGMENTED COMPLIANCE ROWS
+   ========================================================================== */
+
+/* Sleek Framework Slim Row */
+.framework-slim-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  border-radius: 10px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.framework-slim-row:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(203, 213, 225, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Dynamic glow borders for slim rows */
+.framework-slim-row.iso27001-glow:hover { border-color: rgba(21, 101, 192, 0.4); }
+.framework-slim-row.iso27701-glow:hover { border-color: rgba(106, 27, 154, 0.4); }
+.framework-slim-row.soc2-glow:hover { border-color: rgba(27, 94, 32, 0.4); }
+.framework-slim-row.iso42001-glow:hover { border-color: rgba(230, 81, 0, 0.4); }
+.framework-slim-row.ksapdpl-glow:hover { border-color: rgba(194, 65, 12, 0.4); }
+.framework-slim-row.gdpr-glow:hover { border-color: rgba(16, 120, 185, 0.4); }
+.framework-slim-row.dpdpa-glow:hover { border-color: rgba(255, 107, 53, 0.4); }
+
+/* Segmented Compliance Progress Bar */
+.segmented-bar {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.segmented-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: progress-shimmer 2.2s infinite linear;
+  pointer-events: none;
+}
+
+.segmented-portion {
+  height: 100%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}

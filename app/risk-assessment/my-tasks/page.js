@@ -1,14 +1,11 @@
-// app/risk-assessment/my-tasks/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import MyTasks from "@/modules/riskAssesment/pages/MyTasks";
+"use client";
 
-export default function RiskAssessmentMyTasksRoute() {
+import ProtectedPage from "@/components/ProtectedPage";
+import MyTasks from "@/modules/riskAssesment/pages/MyTasks";
+export default function Page() {
   return (
     <ProtectedPage>
-      <FrameworkPage moduleKey="riskAssesment">
-        <MyTasks />
-      </FrameworkPage>
+      <MyTasks />
     </ProtectedPage>
   );
 }

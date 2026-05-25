@@ -1,12 +1,11 @@
-// app/trust-centre/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import TrustCentreContent from "./TrustCentreContent";
+"use client";
 
-export default function TrustCentreRoute() {
+import ProtectedPage from "@/components/ProtectedPage";
+import TrustCentrePage from "@/modules/trustcentre/pages/TrustCentrePage";
+export default function Page() {
   return (
     <ProtectedPage>
-        <TrustCentreContent />
+      <TrustCentrePage />
     </ProtectedPage>
   );
 }

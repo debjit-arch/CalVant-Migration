@@ -728,39 +728,38 @@ import { captureActivity, ACTIONS } from "../../../services/activities";
 
 /* ─── constants ──────────────────────────────────────────────────────────── */
 const NAVBAR_HEIGHT = 72;
-const MODAL_GAP     = 32;
+const MODAL_GAP = 32;
 
 /* ─── helpers ─────────────────────────────────────────────────────────────── */
 function statusStyle(status) {
   if (!status) return { bg: "#f1f5f9", color: "#475569", border: "#e2e8f0" };
   const s = status.toUpperCase();
   if (s === "SUBMITTED") return { bg: "#eff6ff", color: "#1d4ed8", border: "#bfdbfe" };
-  if (s === "APPROVED")  return { bg: "#f0fdf4", color: "#15803d", border: "#bbf7d0" };
+  if (s === "APPROVED") return { bg: "#f0fdf4", color: "#15803d", border: "#bbf7d0" };
   return { bg: "#f1f5f9", color: "#475569", border: "#e2e8f0" };
 }
 
 function riskStyle(level) {
   if (!level) return { bg: "#f1f5f9", color: "#64748b" };
   const l = level.toUpperCase();
-  if (l === "HIGH")   return { bg: "#fee2e2", color: "#991b1b" };
+  if (l === "HIGH") return { bg: "#fee2e2", color: "#991b1b" };
   if (l === "MEDIUM") return { bg: "#fef3c7", color: "#92400e" };
-  if (l === "LOW")    return { bg: "#d1fae5", color: "#065f46" };
+  if (l === "LOW") return { bg: "#d1fae5", color: "#065f46" };
   return { bg: "#f1f5f9", color: "#64748b" };
 }
 
 /* ─── component ──────────────────────────────────────────────────────────── */
 export function AssignDpiaModal({ onClose, onSaved, riskOwners = [], departments = [] }) {
   const sessionUser = getSessionUser();
-  const history     = useHistory();
 
-  const [dpias,    setDpias]   = useState([]);
-  const [loading,  setLoading] = useState(true);
-  const [step,     setStep]    = useState(1);
-  const [selected, setSelected]= useState(null);
-  const [saving,   setSaving]  = useState(false);
-  const [creating, setCreating]= useState(false);
-  const [error,    setError]   = useState("");
-  const [search,   setSearch]  = useState("");
+  const [dpias, setDpias] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [step, setStep] = useState(1);
+  const [selected, setSelected] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   const [form, setForm] = useState({
     assignedTo: "", department: "", dueDate: "", notes: "", priority: "Medium",
@@ -787,18 +786,18 @@ export function AssignDpiaModal({ onClose, onSaved, riskOwners = [], departments
   /* ── filtered vendors by department ── */
   const filteredRiskOwners = form.department
     ? riskOwners.filter(owner => {
-        const ownerDepts = Array.isArray(owner.department)
-          ? owner.department
-          : owner.department ? [owner.department] : [];
-        if (ownerDepts.length === 0) return false;
-        const selectedDeptObj  = departments.find(d => d.name === form.department);
-        const selectedDeptId   = selectedDeptObj?._id || selectedDeptObj?.id || "";
-        const selectedDeptName = form.department;
-        return ownerDepts.some(dept => {
-          const deptStr = String(dept || "").trim().toLowerCase();
-          return deptStr === selectedDeptId.toLowerCase() || deptStr === selectedDeptName.toLowerCase();
-        });
-      })
+      const ownerDepts = Array.isArray(owner.department)
+        ? owner.department
+        : owner.department ? [owner.department] : [];
+      if (ownerDepts.length === 0) return false;
+      const selectedDeptObj = departments.find(d => d.name === form.department);
+      const selectedDeptId = selectedDeptObj?._id || selectedDeptObj?.id || "";
+      const selectedDeptName = form.department;
+      return ownerDepts.some(dept => {
+        const deptStr = String(dept || "").trim().toLowerCase();
+        return deptStr === selectedDeptId.toLowerCase() || deptStr === selectedDeptName.toLowerCase();
+      });
+    })
     : riskOwners;
 
   /* auto-select single vendor */
@@ -831,18 +830,18 @@ export function AssignDpiaModal({ onClose, onSaved, riskOwners = [], departments
       const owner = riskOwners.find(u => String(u._id || u.id) === form.assignedTo);
       if (form.department) await dpiaApi.updateDepartments(selected.id, [form.department]);
       await dpiaApi.assignDpia({
-        dpiaId:          selected.id,
-        projectName:     selected.projectName || selected.id,
-        assignedTo:      form.assignedTo,
-        assignedToName:  owner ? owner.name : form.assignedTo,
-        department:      form.department,
-        dueDate:         form.dueDate,
-        notes:           form.notes,
-        priority:        form.priority,
-        assignedBy:      sessionUser.id || sessionUser._id || "",
-        assignedByName:  sessionUser.name || "",
-        organizationId:  sessionUser.organization || sessionUser.organizationId || "",
-        status:          "PENDING",
+        dpiaId: selected.id,
+        projectName: selected.projectName || selected.id,
+        assignedTo: form.assignedTo,
+        assignedToName: owner ? owner.name : form.assignedTo,
+        department: form.department,
+        dueDate: form.dueDate,
+        notes: form.notes,
+        priority: form.priority,
+        assignedBy: sessionUser.id || sessionUser._id || "",
+        assignedByName: sessionUser.name || "",
+        organizationId: sessionUser.organization || sessionUser.organizationId || "",
+        status: "PENDING",
       });
       captureActivity({
         action: ACTIONS.CREATE,
@@ -867,7 +866,7 @@ export function AssignDpiaModal({ onClose, onSaved, riskOwners = [], departments
       style={{ paddingTop: NAVBAR_HEIGHT + MODAL_GAP, paddingBottom: MODAL_GAP }}
     >
       <motion.div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-auto flex flex-col"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-auto flex flex-col"
         style={{ maxHeight: `calc(100vh - ${NAVBAR_HEIGHT + MODAL_GAP * 2}px)` }}
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -987,8 +986,8 @@ export function AssignDpiaModal({ onClose, onSaved, riskOwners = [], departments
                   </div>
                 ) : (
                   filteredDpias.map((dpia, i) => {
-                    const st  = statusStyle(dpia.status);
-                    const rl  = riskStyle(dpia.overallRiskLevel);
+                    const st = statusStyle(dpia.status);
+                    const rl = riskStyle(dpia.overallRiskLevel);
                     const sel = selected?.id === dpia.id;
                     return (
                       <motion.div
@@ -997,7 +996,7 @@ export function AssignDpiaModal({ onClose, onSaved, riskOwners = [], departments
                         className="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
                         style={{
                           borderColor: sel ? "#7c3aed" : "#f1f5f9",
-                          background:  sel ? "#fdf4ff" : "#fff",
+                          background: sel ? "#fdf4ff" : "#fff",
                         }}
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}

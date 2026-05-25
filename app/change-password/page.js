@@ -1,5 +1,9 @@
-import ChangePasswordModal from "@/modules/dashboard/ChangePasswordModal";
+"use client";
 
-export default function ChangePassword(){
-    return <ChangePasswordModal/>
+import dynamic from 'next/dynamic';
+
+const ChangePasswordModal = dynamic(() => import('@/modules/dashboard/ChangePasswordModal'), { ssr: false });
+
+export default function ChangePassword() {
+  return <ChangePasswordModal />;
 }

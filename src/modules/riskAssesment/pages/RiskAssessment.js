@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   useState,
   useEffect,
@@ -10,6 +8,7 @@ import React, {
 import { useRouter } from "next/navigation";
 import riskService from "../services/riskService";
 import { useFramework } from "../../../context/FrameworkContex";
+import { useLayout } from "../../../context/LayoutContext";
 import {
   BarChart3,
   FileText,
@@ -21,6 +20,7 @@ import {
   CheckCircle2,
   Circle,
   XCircle,
+  RefreshCw,
 } from "lucide-react";
 
 import {
@@ -41,18 +41,14 @@ import { motion, AnimatePresence } from "framer-motion";
 // ─── Framework filter helpers ─────────────────────────────────────────────────
 // ─── Framework filter helpers ─────────────────────────────────────────────────
 
-
-
-
-
 function riskMatchesFilter(risk, allowedRiskTypes) {
   const types = Array.isArray(risk.riskType)
     ? risk.riskType.map((t) => t.trim().toLowerCase())
     : risk.riskType
       ? String(risk.riskType)
-          .split(",")
-          .map((s) => s.trim().toLowerCase())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean)
       : [];
   if (types.length === 0) return false;
   const normalizedAllowed = new Set(
@@ -65,27 +61,28 @@ function riskMatchesFilter(risk, allowedRiskTypes) {
 const RiskAssessment = () => {
   const router = useRouter();
   const chartsContainerRef = useRef(null);
+  const { collapseSidebar } = useLayout();
 
   // ── Framework context ──────────────────────────────────────────────────────
-  const { selectedFrameworks, isAllSelected, availableFrameworks } = useFramework();
+  const { selectedFrameworks, isAllSelected, availableFrameworks } =
+    useFramework();
 
   // Compute allowed risk types for active filter (null = ALL, no filter)
   const allowedRiskTypes = useMemo(() => {
     if (isAllSelected) return null;
     const allowed = new Set();
     selectedFrameworks.forEach((fwId) => {
-      const fw = availableFrameworks?.find(f => f.id === fwId);
+      const fw = availableFrameworks?.find((f) => f.id === fwId);
       if (fw && fw.riskTypes) {
-        fw.riskTypes.forEach(rt => allowed.add(rt));
+        fw.riskTypes.forEach((rt) => allowed.add(rt));
       }
     });
-    // Fallback: if somehow no risk types matched, we allow nothing or everything? 
-    // If no risk types are defined for the framework, it might show 0 risks. 
+    // Fallback: if somehow no risk types matched, we allow nothing or everything?
+    // If no risk types are defined for the framework, it might show 0 risks.
     // That's expected if we enforce riskTypes filtering.
     return allowed;
   }, [selectedFrameworks, isAllSelected, availableFrameworks]);
 
-  // 1. Initialize User and check for multi-role/multi-dept structure
   const [user] = useState(() => JSON.parse(sessionStorage.getItem("user")));
   const userRoles = Array.isArray(user?.role) ? user.role : [user?.role || ""];
   const isRoot = userRoles.includes("root");
@@ -95,7 +92,7 @@ const RiskAssessment = () => {
     : (user?.departments || []).map((d) => d.name).join(", ") || "Your";
 
   const [run, setRun] = useState(false);
-  const [departmentName, setDepartmentName] = useState(deptLabel);
+  const [departmentName, setDepartmentName] = useState("Your");
   const [allRisks, setAllRisks] = useState([]);
 
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -212,8 +209,14 @@ const RiskAssessment = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) router.push("/");
+    if (!user) {
+      router.push("/");
+    }
   }, [user, router]);
+
+  useEffect(() => {
+    collapseSidebar();
+  }, [collapseSidebar]);
 
   // ── Load ALL org/dept risks (original logic unchanged) ────────────────────
   const loadRiskStats = useCallback(async () => {
@@ -226,8 +229,8 @@ const RiskAssessment = () => {
       const userDeptNames = isRoot
         ? []
         : (user.departments || []).map((d) =>
-            (d.name || "").trim().toLowerCase(),
-          );
+          (d.name || "").trim().toLowerCase(),
+        );
 
       const departmentRisks = risks.filter((risk) => {
         const riskOrgId = risk.organization?._id || risk.organization;
@@ -421,20 +424,37 @@ const RiskAssessment = () => {
         {/* ── Professional Header ── */}
         <motion.header
           id="dashboard-header"
-          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-2 lg:mb-2 p-4 lg:p-5"
+          className="bg-white/80 backdrop-blur-md border border-slate-100/50 rounded-xl shadow-md mb-2 lg:mb-2 p-4 lg:p-5 !text-left"
+          style={{
+            textAlign: "left",
+            width: "100%",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+          }}
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-6">
-            <div className="flex items-center gap-4 flex-1">
+          <div className="flex items-center justify-between w-full">
+
+            <div
+              className="flex items-center gap-4 flex-1"
+              style={{
+                justifyContent: "flex-start",
+                textAlign: "left",
+                alignItems: "flex-start",
+              }}
+            >
               <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <BarChart3 className="w-6 h-6 lg:w-7 lg:h-7 text-white drop-shadow-sm" />
               </div>
 
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0" style={{ textAlign: "left" }}>
                 {/* Title row — framework badges sit inline */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div
+                  className="flex items-center justify-start gap-2 flex-wrap"
+                  style={{ justifyContent: "flex-start" }}
+                >
                   <h1 className="text-xl lg:text-2xl font-semibold text-slate-800 leading-tight">
                     Risks Dashboard
                   </h1>
@@ -442,10 +462,14 @@ const RiskAssessment = () => {
                   {/* Framework filter pills — only shown when a specific filter is active */}
                   {!isAllSelected &&
                     selectedFrameworks.map((fwId) => {
-                      const fwObj = availableFrameworks?.find(f => f.id === fwId);
+                      const fwObj = availableFrameworks?.find(
+                        (f) => f.id === fwId,
+                      );
                       const bg = fwObj?.color ? fwObj.color + "15" : "#f1f5f9";
                       const color = fwObj?.color || "#334155";
-                      const border = fwObj?.color ? fwObj.color + "40" : "#cbd5e1";
+                      const border = fwObj?.color
+                        ? fwObj.color + "40"
+                        : "#cbd5e1";
                       return (
                         <span
                           key={fwId}
@@ -493,24 +517,41 @@ const RiskAssessment = () => {
               </div>
             </div>
 
-            <motion.button
-              className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
-              onClick={() => {
-                setRun(false);
-                setTimeout(() => setRun(true), 100);
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <HelpCircle size={18} />
-              <span>Guide</span>
-            </motion.button>
+            <div className="flex items-center gap-3">
+              <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${isRoot ? "bg-blue-100 text-blue-700" : "bg-violet-100 text-violet-700"}`}>
+                {isRoot ? "Root" : (userRoles[0] ? userRoles[0].replace("_", " ") : "User")}
+              </span>
+              <span className="text-sm font-semibold text-slate-600">
+                {user?.name || "User"}
+              </span>
+              <motion.button
+                onClick={loadRiskStats}
+                title="Refresh"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200 flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <RefreshCw size={15} className="text-slate-500" />
+              </motion.button>
+              <motion.button
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
+                onClick={() => {
+                  setRun(false);
+                  setTimeout(() => setRun(true), 100);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <HelpCircle size={18} />
+                <span>Guide</span>
+              </motion.button>
+            </div>
           </div>
         </motion.header>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10 h-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10 w-full min-w-0">
           {/* Left: Stats + Actions */}
-          <div className="space-y-8 lg:space-y-10">
+          <div className="space-y-8 lg:space-y-10 w-full min-w-0">
             {/* Stats Grid */}
             <motion.section
               id="stats-grid"
@@ -655,11 +696,11 @@ const RiskAssessment = () => {
           <div
             ref={chartsContainerRef}
             id="charts-container"
-            className="space-y-4 lg:space-y-3"
+            className="space-y-4 lg:space-y-3 w-full min-w-0"
           >
             {/* Pie chart */}
             <motion.div
-              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-9 lg:p-8 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-400 h-72 flex flex-col"
+              className="bg-white/70 backdrop-blur-sm border border-slate-100/50 rounded-2xl p-9 lg:p-8 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-400 h-72 flex flex-col w-full min-w-0"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.01 }}
@@ -667,9 +708,9 @@ const RiskAssessment = () => {
               <h3 className="text-base lg:text-lg font-semibold text-slate-800 mb-6 px-1">
                 Risk Distribution
               </h3>
-              <div className="flex-1 flex items-center justify-center min-h-0">
+              <div className="flex-1 flex items-center justify-center min-h-0 w-full min-w-0">
                 {riskStats.total > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" debounce={50}>
                     <PieChart>
                       <Pie
                         data={pieData}
@@ -741,6 +782,8 @@ const RiskAssessment = () => {
                 transition: "all 0.4s ease",
                 display: "flex",
                 flexDirection: "column",
+                width: "100%",
+                minWidth: 0,
               }}
               whileHover={{ scale: 1.01 }}
             >
@@ -798,53 +841,53 @@ const RiskAssessment = () => {
                 </select>
               </div>
 
-              <div style={{ width: "100%", height: "100%" }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={monthlyRiskData}
-                    margin={{ top: 15, right: 15, left: -5, bottom: 10 }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="riskGradient"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#3b82f6"
-                          stopOpacity={0.9}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#93c5fd"
-                          stopOpacity={0.6}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      vertical={false}
-                      stroke="#f1f5f9"
-                      strokeDasharray="3 3"
-                    />
-                    <XAxis
-                      dataKey="name"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 12, fill: "#6b7280", fontWeight: 500 }}
-                    />
-                    <Tooltip content={<CustomBarTooltip />} />
-                    <Bar
-                      dataKey="value"
-                      fill="url(#riskGradient)"
-                      radius={[6, 6, 0, 0]}
-                      barSize={24}
-                      animationDuration={800}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+              <div style={{ width: "100%", height: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%" debounce={50}>
+                    <BarChart
+                      data={monthlyRiskData}
+                      margin={{ top: 15, right: 15, left: -5, bottom: 10 }}
+                    >
+                      <defs>
+                        <linearGradient
+                          id="riskGradient"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="5%"
+                            stopColor="#3b82f6"
+                            stopOpacity={0.9}
+                          />
+                          <stop
+                            offset="95%"
+                            stopColor="#93c5fd"
+                            stopOpacity={0.6}
+                          />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid
+                        vertical={false}
+                        stroke="#f1f5f9"
+                        strokeDasharray="3 3"
+                      />
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 12, fill: "#6b7280", fontWeight: 500 }}
+                      />
+                      <Tooltip content={<CustomBarTooltip />} />
+                      <Bar
+                        dataKey="value"
+                        fill="url(#riskGradient)"
+                        radius={[6, 6, 0, 0]}
+                        barSize={24}
+                        animationDuration={800}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
               </div>
             </motion.div>
           </div>

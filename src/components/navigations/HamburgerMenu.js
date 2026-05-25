@@ -131,7 +131,7 @@ import Image from "next/image";
 //           shadow-sm
 //         "
 //           >
-//             <img
+//             <Image
 //               src="/favicon.png"
 //               alt="CalVant Logo"
 //               className="

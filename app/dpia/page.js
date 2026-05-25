@@ -1,3 +1,4 @@
+"use client";
 // app/dpia/page.js
 import ProtectedPage from "@/components/ProtectedPage";
 import FrameworkPage from "@/components/FrameworkPage";

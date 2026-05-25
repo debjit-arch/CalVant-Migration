@@ -1,14 +1,11 @@
-// app/gap-assessment/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import AuditDashboard from "@/modules/gapAssessment/pages/GapAssessment";
+"use client";
 
-export default function GapAssessmentRoute() {
+import ProtectedPage from "@/components/ProtectedPage";
+import GapAssessmentDashboard from "@/modules/gapAssessment/pages/GapAssessment";
+export default function Page() {
   return (
     <ProtectedPage>
-      <FrameworkPage moduleKey="gapAssessment">
-        <AuditDashboard />
-      </FrameworkPage>
+      <GapAssessmentDashboard />
     </ProtectedPage>
   );
 }

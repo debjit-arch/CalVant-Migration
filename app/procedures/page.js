@@ -1,5 +1,9 @@
-import ProceduresPage from "@/modules/dashboard/Template/Procedures";
+"use client";
 
-export default function ProcedurePa(){
-    return <ProceduresPage/>
+import dynamic from 'next/dynamic';
+
+const Procedures = dynamic(() => import('@/modules/dashboard/Template/Procedures'), { ssr: false });
+
+export default function Page() {
+  return <Procedures />;
 }

@@ -1,12 +1,11 @@
-// app/gap-assessment/new/page.js
-import ProtectedPage from "@/components/ProtectedPage";
-import FrameworkPage from "@/components/FrameworkPage";
-import NewAssessment from "@/modules/gapAssessment/pages/NewAssessment";
+"use client";
 
-export default function GapAssessmentNewRoute() {
+import ProtectedPage from "@/components/ProtectedPage";
+import NewAssessment from "@/modules/gapAssessment/pages/NewAssessment";
+export default function Page() {
   return (
     <ProtectedPage>
-        <NewAssessment />
+      <NewAssessment />
     </ProtectedPage>
   );
 }

@@ -1,6 +1,6 @@
-// TreatmentPlanForm — fixed stale controlOptions closure
-"use client";
+//C:\Users\ak192\Downloads\CV_Beta_v1.0.0-Calvant_migration\CV_Beta_v1.0.0-Calvant_migration\src\modules\riskAssesment\components\forms\TreatmentPlanForm.js
 
+// TreatmentPlanForm — fixed stale controlOptions closure
 import React, { useState, useEffect, useCallback } from "react";
 import TextAreaField from "../inputs/TextAreaField";
 import Select from "react-select";
@@ -110,14 +110,13 @@ const ControlTree = ({
                     {expanded[catKey] &&
                       cat.controls.map((ctrl) => {
                         const isSelected = selectedValues.includes(ctrl.id);
-                        const isAutoSelected = autoSelectedControls[
-                          fw.framework
-                        ]?.some(
-                          (code) =>
-                            normalizeCode(code) ===
-                            normalizeCode(ctrl.controlCode),
-                        );
-
+                               const isAutoSelected = !!autoSelectedControls[
+                              fw.framework
+                                 ]?.some(
+                                   (code) =>
+                                normalizeCode(code) ===
+                                     normalizeCode(ctrl.controlCode),
+                                     );
                         return (
                           <div
                             key={ctrl.id}

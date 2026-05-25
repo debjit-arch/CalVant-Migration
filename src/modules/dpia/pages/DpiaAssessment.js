@@ -1,8 +1,9 @@
+import Link from 'next/link';
 // //C:\Users\ak192\Downloads\cf-tool-frontend-prod (6)\cf-tool-frontend-prod\src\modules\dpia\pages\DpiaAssessment.js
 
 
 // import React, { useState, useEffect, useCallback } from "react";
-// import { useParams } from "next/navigation";
+// import { useRouter, useParams } from "next/navigation";
 // import Stage1Form from "../components/Stage1Form";
 // import Stage2Form from "../components/Stage2Form";
 // import Stage3Form from "../components/Stage3Form";
@@ -836,7 +837,7 @@
 // C:\Users\ak192\Downloads\cf-tool-frontend-prod (6)\cf-tool-frontend-prod\src\modules\dpia\pages\DpiaAssessment.js
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Stage1Form from "../components/Stage1Form";
 import Stage2Form from "../components/Stage2Form";
 import Stage3Form from "../components/Stage3Form";

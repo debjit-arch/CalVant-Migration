@@ -12,13 +12,6 @@
   scroll-behavior: auto;
 }
 
-html {
-  scroll-behavior: auto !important;
-}
-
-body {
-  scroll-behavior: auto !important;
-}
 /* ========================================
    HEADER & NAVBAR
    ======================================== */

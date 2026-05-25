@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import { risksApi } from '../services/aiiaApi';

@@ -1,6 +1,14 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { fetchSeoData, sanitizeMetaContent } from '../utils/seoApi';
-import { matchPath} from 'react-router-dom';
+// Simple local matchPath replacement for Next.js compatibility
+const matchPath = (currentPath, { path }) => {
+    if (!path || !currentPath) return false;
+    const pattern = path.replace(/:[^\s/]+/g, '([\\w-]+)');
+    const regex = new RegExp(`^${pattern}$`, 'i');
+    return regex.test(currentPath);
+};
 
 const SEOContext = createContext(null);
 
@@ -57,8 +65,6 @@ export const SEOProvider = ({ children }) => {
                 if (entryUrl.includes(':')) { // Potential dynamic route
                     return !!matchPath(normalizedCurrent, {
                         path: entryUrl,
-                        exact: true,
-                        strict: false,
                     });
                 }
                 return false;
@@ -86,7 +92,7 @@ export const SEOProvider = ({ children }) => {
             description: sanitizeMetaContent(matched.metaDesc),
             keywords: sanitizeMetaContent(matched.metaKeywords),
             ogImage: advanced.og_img || null,
-            canonical: advanced.canonical || `${window.location.origin}${currentPath}`,
+            canonical: advanced.canonical || currentPath,
             robots: advanced.robots || 'index, follow',
         };
     }, [seoEntries]);
